@@ -1,0 +1,8 @@
+* <2016-10-13>
+** Fait:
+   - Git configuré
+   - SDK installé
+   - Moteur qui tourne
+** A faire:
+   - Monter le robot
+   - http://www.sitedunxt.fr/download/Building_Instructions_Suiveur_de_ligne.html
