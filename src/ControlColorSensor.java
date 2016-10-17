@@ -16,8 +16,8 @@ public class ControlColorSensor {
 		TextMenu portMenu = new TextMenu(ports, 1, "Sensor port");
 		String modes[] = {"Full", "Red", "Green", "Blue", "White", "None"};
 		int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.BLACK, Color.NONE};
-		String colorNames[] = {"None","Red","White","Green","Blue","Black","Yellow","Megenta",
-				"Orange","Pink","Grey","Light Grey","Dark Grey","Cyan"};
+		String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
+				"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
 		TextMenu modeMenu = new TextMenu(modes, 1, "Color Mode");
 		
 		int portNo = portMenu.select();
