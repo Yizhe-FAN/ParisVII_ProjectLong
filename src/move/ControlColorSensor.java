@@ -60,13 +60,14 @@ public class ControlColorSensor {
 	
 
 	public void show(){
-			System.out.println("black "+ColorSensor.Color.BLACK +"blue "+ColorSensor.Color.BLUE
+			String tmp = "black "+ColorSensor.Color.BLACK +"blue "+ColorSensor.Color.BLUE
 					+"CYan "+ColorSensor.Color.CYAN+"Darkgray "+ColorSensor.Color.DARK_GRAY+"gray "
 					+ColorSensor.Color.GRAY+"green "+ColorSensor.Color.GREEN+"light gray "+
 					ColorSensor.Color.LIGHT_GRAY+"magenta "+ColorSensor.Color.MAGENTA+"none"
 					+ColorSensor.Color.NONE+"Orange"+ColorSensor.Color.ORANGE+"pink "+
 					ColorSensor.Color.PINK+"red "+ColorSensor.Color.RED+"white "+ColorSensor.Color.WHITE+"yellow "
-					+ColorSensor.Color.YELLOW);
+					+ColorSensor.Color.YELLOW;
+			LCD.drawString(tmp, 0, 0);
 		}
 	
 }
