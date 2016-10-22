@@ -19,7 +19,7 @@ public class ControlColorSensor {
 		LCD.drawInt(calibreated, 5, 11, line);
 	}
 	
-	public void ColorSensorReader(){
+	public void colorSensorReader(){
 		
 		TextMenu modeMenu = new TextMenu(modes, 1, "Color Mode");
 		
@@ -41,7 +41,7 @@ public class ControlColorSensor {
 					displayColor("Green", rawVals.getGreen(), vals.getGreen(), 3);
 					displayColor("Blue", rawVals.getBlue(), vals.getBlue(), 4);
 					displayColor("None", rawVals.getBackground(), vals.getBackground(), 5);
-					LCD.drawString("Color:  ", 0, 6);
+					LCD.drawString("Color: ", 0, 6);
 					LCD.drawString(colorNames[vals.getColor() + 1], 7, 6);//afficher couleur sur écran
 					LCD.drawString("Color val:  ", 0, 7);
 					LCD.drawInt(vals.getColor(), 3, 11, 7);
@@ -58,16 +58,20 @@ public class ControlColorSensor {
 
 	}
 	
-
-	public void show(){
-			String tmp = "black "+ColorSensor.Color.BLACK +"blue "+ColorSensor.Color.BLUE
-					+"CYan "+ColorSensor.Color.CYAN+"Darkgray "+ColorSensor.Color.DARK_GRAY+"gray "
-					+ColorSensor.Color.GRAY+"green "+ColorSensor.Color.GREEN+"light gray "+
-					ColorSensor.Color.LIGHT_GRAY+"magenta "+ColorSensor.Color.MAGENTA+"none"
-					+ColorSensor.Color.NONE+"Orange"+ColorSensor.Color.ORANGE+"pink "+
-					ColorSensor.Color.PINK+"red "+ColorSensor.Color.RED+"white "+ColorSensor.Color.WHITE+"yellow "
-					+ColorSensor.Color.YELLOW;
-			LCD.drawString(tmp, 0, 0);
-		}
+	//return -1 si erreur
+	public int returnColorId(){
+		int id = -1;
+		TextMenu modeMenu = new TextMenu(modes, 1, "Color Mode");
+		int portNo = portMenu.select();
+		if(portNo < 0)return -1;
+		ColorSensor cs = new ColorSensor(SensorPort.getInstance(portNo));
+		int mode = modeMenu.select();
+		if(mode < 0) return -1;
+		cs.setFloodlight(colors[mode]);
+		LCD.clear();
+		ColorSensor.Color vals = cs.getColor();
+		id = vals.getColor();
+		return id;
+	}
 	
 }
