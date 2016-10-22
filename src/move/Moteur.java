@@ -6,7 +6,7 @@ import lejos.nxt.Motor;
 
 public class Moteur {
 
-	public static void main(String[] args) {
+	public void testMoteur() {
 		// TODO Auto-generated method stub
 		Motor.A.forward();
 		LCD.drawString("forward", 0, 1);
