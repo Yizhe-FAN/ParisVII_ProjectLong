@@ -58,19 +58,22 @@ public class ControlColorSensor {
 
 	}
 	
-	//return -1 si erreur
-	public int returnColorId(){
-		int id = -1;
+	public ColorSensor setColorSenor(){
 		TextMenu modeMenu = new TextMenu(modes, 1, "Color Mode");
 		int portNo = portMenu.select();
-		if(portNo < 0)return -1;
+		if(portNo < 0)return null;
 		ColorSensor cs = new ColorSensor(SensorPort.getInstance(portNo));
 		int mode = modeMenu.select();
-		if(mode < 0) return -1;
+		if(mode < 0) return null;
 		cs.setFloodlight(colors[mode]);
 		LCD.clear();
+		return cs;
+	}
+	
+	//return -1 si erreur
+	public int returnColorId(ColorSensor cs){	
 		ColorSensor.Color vals = cs.getColor();
-		id = vals.getColor();
+		int id = vals.getColor();
 		return id;
 	}
 	

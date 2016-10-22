@@ -47,6 +47,12 @@ public class Moteur {
 		
 	}
 	
+	public void stop(){
+		Motor.A.stop();
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+	
 	public void smallmove(){
 		int smallSpeed = 180;
 		Motor.A.setSpeed(smallSpeed);
