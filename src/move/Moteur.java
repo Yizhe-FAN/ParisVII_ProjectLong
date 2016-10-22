@@ -45,13 +45,7 @@ public class Moteur {
 		LCD.drawInt(angle, 0, 5);
 		Button.waitForAnyPress();
 		
-	}
-	
-	public void stop(){
-		Motor.A.stop();
-		Motor.B.stop();
-		Motor.C.stop();
-	}
+	}	
 	
 	public void smallmove(){
 		int smallSpeed = 180;
@@ -62,5 +56,17 @@ public class Moteur {
 		Motor.B.forward();
 		Motor.C.forward();
 	}
+	
+	public void stop(){
+		Motor.A.stop();
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+	
+	/*public static void main(String args[]){
+		Moteur move = new Moteur();
+		move.smallmove();
+		Button.waitForAnyPress();
+	}*/
 
 }
