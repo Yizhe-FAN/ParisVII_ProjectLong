@@ -56,5 +56,17 @@ public class Moteur {
 		Motor.B.forward();
 		Motor.C.forward();
 	}
+	
+	public void stop(){
+		Motor.A.stop();
+		Motor.B.stop();
+		Motor.C.stop();
+	}
+	
+	/*public static void main(String args[]){
+		Moteur move = new Moteur();
+		move.smallmove();
+		Button.waitForAnyPress();
+	}*/
 
 }
