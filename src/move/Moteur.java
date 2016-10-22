@@ -46,5 +46,15 @@ public class Moteur {
 		Button.waitForAnyPress();
 		
 	}
+	
+	public void smallmove(){
+		int smallSpeed = 180;
+		Motor.A.setSpeed(smallSpeed);
+		Motor.B.setSpeed(smallSpeed);
+		Motor.C.setSpeed(smallSpeed);
+		Motor.A.forward();
+		Motor.B.forward();
+		Motor.C.forward();
+	}
 
 }
