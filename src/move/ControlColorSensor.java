@@ -72,6 +72,7 @@ public class ControlColorSensor {
 	
 	public int returnColorId(ColorSensor cs){	
 		ColorSensor.Color vals = cs.getColor();
+		LCD.drawString(colorNames[vals.getColor() + 1], 0, 0);
 		int id = vals.getColor();
 		return id;
 	}
