@@ -70,7 +70,6 @@ public class ControlColorSensor {
 		return cs;
 	}
 	
-	//return -1 si erreur
 	public int returnColorId(ColorSensor cs){	
 		ColorSensor.Color vals = cs.getColor();
 		int id = vals.getColor();

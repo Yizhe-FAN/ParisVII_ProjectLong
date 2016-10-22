@@ -16,7 +16,7 @@ public class RunRobot {
 				mTest.smallmove();
 			}else{
 				mTest.stop();
-			}//
+			}
 		}
 	}
 
