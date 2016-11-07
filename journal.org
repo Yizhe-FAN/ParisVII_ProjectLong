@@ -1,3 +1,10 @@
+* Lun  7 nov 2016 10:38:32 CET
+** Fait:
+   - montage robot, déplacer sur zone banche et s'arrêter lorsqu'autre couleur
+** À faire:
+   - construire un système de reconnaissance de couleur:
+     1) phase d'apprentissage, on fait différentes mesures pur chaque couleur à apprendre
+     2) phase de reconnaissance, on fait une mesure et on en déduit la couleur probable dont il s'agit (en fonction de ce qui a été appris)
 * <2016-10-13>
 ** Fait:
    - Git configuré
