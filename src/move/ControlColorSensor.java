@@ -13,6 +13,7 @@ public class ControlColorSensor {
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
 	
+	
 	public void displayColor(String name, int raw, int calibreated, int line){
 		LCD.drawString(name, 0, line);
 		LCD.drawInt(raw, 5, 6, line);
