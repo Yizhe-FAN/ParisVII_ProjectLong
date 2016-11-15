@@ -1,4 +1,7 @@
 package move;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import lejos.nxt.*;
 import lejos.robotics.*;
 import lejos.util.TextMenu;
@@ -12,6 +15,29 @@ public class ControlColorSensor {
 	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
+	private LinkedList<ArrayList> colorType;
+	
+	public ControlColorSensor(){
+		colorType = new LinkedList<ArrayList>();
+	}
+	
+	public void colorReader(ColorSensor cs){
+		
+		while(!Button.ESCAPE.isDown()){
+			if(Button.RIGHT.isDown()){
+				ArrayList<ColorSensor.Color> tempList = new ArrayList<ColorSensor.Color>();
+				colorType.add(tempList);
+				
+			}
+			if(Button.LEFT.isDown()){
+				int size = colorType.size();
+				ArrayList<ColorSensor.Color> handleList = colorType.get(size-1);
+				ColorSensor.Color vals = cs.getRawColor();
+				handleList.add(vals);
+			}
+		}
+		
+	}
 	
 	
 	public void displayColor(String name, int raw, int calibreated, int line){
