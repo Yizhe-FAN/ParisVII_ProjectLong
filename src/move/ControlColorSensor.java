@@ -9,7 +9,7 @@ public class ControlColorSensor {
 	private String ports[] = {"Port-1", "Port-2", "Port-3", "Port-4"};
 	private TextMenu portMenu = new TextMenu(ports, 1, "Sensor port");
 	private String modes[] = {"Full", "Red", "Green", "Blue", "White", "None"};
-	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.BLACK, Color.NONE};
+	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
 	
@@ -73,9 +73,27 @@ public class ControlColorSensor {
 	
 	public int returnColorId(ColorSensor cs){	
 		ColorSensor.Color vals = cs.getColor();
-		LCD.drawString(colorNames[vals.getColor() + 1], 0, 0);
+		LCD.drawString("Color now: "+colorNames[vals.getColor() + 1], 0, 2);
 		int id = vals.getColor();
 		return id;
+	}
+	
+	public String returnColor(ColorSensor cs){
+		ColorSensor.Color vals = cs.getColor();
+		return colorNames[vals.getColor() + 1];
+	}
+	
+	//test FlootLight
+	public void testFlootLight(ColorSensor cs){
+		
+		for(int i=0; i< 14; i++){
+			cs.setFloodlight(i-1);
+			LCD.drawString("Color: "+colorNames[i], 0, 0);
+			ColorSensor.Color vals = cs.getColor();
+			LCD.drawString(colorNames[vals.getColor() + 1], 0, 1);
+			Button.waitForAnyPress();
+			LCD.clear();
+		}
 	}
 	
 }

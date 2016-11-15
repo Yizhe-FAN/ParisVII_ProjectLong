@@ -2,27 +2,33 @@ package move;
 
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
+import lejos.nxt.LCD;
 
 public class RunRobot {
 	
 	public static void main(String args[]){
-		ControlColorSensor test = new ControlColorSensor();
-		Moteur mTest = new Moteur();
-		ColorSensor cs = test.setColorSenor();
+		ControlColorSensor mColorSensor = new ControlColorSensor();
+		Moteur mMoteur = new Moteur();
+		ColorSensor cs = mColorSensor.setColorSenor();
 		int setcolor = -1;
 		
 		while(!Button.ESCAPE.isDown()){
-			
-			if(Button.ENTER.isDown()){
-				setcolor = test.returnColorId(cs);
+			if(Button.LEFT.isDown()){
+				String color = mColorSensor.returnColor(cs);
+				setcolor = mColorSensor.returnColorId(cs);
+				LCD.drawString("Set color: "+color, 0, 1);
 			}
-			int id = test.returnColorId(cs);
-			if(id == setcolor){
-				mTest.smallmove();
+			int idCurrent = mColorSensor.returnColorId(cs);
+			if(idCurrent == setcolor){
+				mMoteur.smallmove();
 			}else{
-				mTest.stop();
+				mMoteur.stop();
 			}
 		}
+		
+		//mColorSensor.colorSensorReader();
+		
+		//mColorSensor.testFlootLight(cs);
 	}
 
 }
