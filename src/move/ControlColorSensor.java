@@ -54,7 +54,7 @@ public class ControlColorSensor {
 							(r<s.rgbMax.r && g<s.rgbMax.g && b<s.rgbMax.b)){
 						LCD.drawString("This is color: "+i, 0, 1);
 					}
-					
+					//add verifier avg
 				}
 			}
 		}
