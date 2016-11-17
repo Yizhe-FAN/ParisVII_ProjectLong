@@ -1,7 +1,5 @@
 package move;
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 import lejos.nxt.*;
 import lejos.robotics.*;
 import lejos.util.TextMenu;
