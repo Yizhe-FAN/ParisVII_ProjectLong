@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import lejos.nxt.*;
 import lejos.robotics.*;
 import lejos.util.TextMenu;
-import lejos.nxt.ColorSensor;
 
 public class ControlColorSensor {
 	
@@ -15,30 +14,103 @@ public class ControlColorSensor {
 	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
-	private LinkedList<ArrayList> colorType;
+	private ArrayList<ColorState> colorType;
 	
 	public ControlColorSensor(){
-		colorType = new LinkedList<ArrayList>();
+		colorType = new ArrayList<ColorState>();
 	}
 	
 	public void colorReader(ColorSensor cs){
-		
 		while(!Button.ESCAPE.isDown()){
 			if(Button.RIGHT.isDown()){
-				ArrayList<ColorSensor.Color> tempList = new ArrayList<ColorSensor.Color>();
-				colorType.add(tempList);
-				
+				ColorState clst = new ColorState();
+				colorType.add(clst);
+				LCD.drawString("Set color: "+colorType.size(), 0, 1);
 			}
 			if(Button.LEFT.isDown()){
 				int size = colorType.size();
-				ArrayList<ColorSensor.Color> handleList = colorType.get(size-1);
-				ColorSensor.Color vals = cs.getRawColor();
-				handleList.add(vals);
+				ColorState handleList = colorType.get(size-1);
+				ColorSensor.Color vals = cs.getColor();
+				updateMin(vals, handleList);
+				updateMax(vals, handleList);
+				updateAvg(vals, handleList);
+				handleList.rgbInfo.add(vals);
+				LCD.drawString("Get info of color: "+handleList.rgbInfo.size()+" times", 0, 2);
 			}
 		}
 		
 	}
 	
+	public void colorChecker(ColorSensor cs){
+		while(!Button.ESCAPE.isDown()){
+			if(Button.LEFT.isDown()){
+				LCD.clearDisplay();
+				int r,g,b;
+				int size = colorType.size();
+				ColorSensor.Color vals = cs.getColor();
+				r = vals.getRed(); g = vals.getGreen();
+				b = vals.getBlue();
+				for(int i = 0; i < size; ++i){
+					ColorState s = colorType.get(i);
+					if((r>s.rgbMin.r && g>s.rgbMin.g && b>s.rgbMin.b)&&
+							(r<s.rgbMax.r && g<s.rgbMax.g && b<s.rgbMax.b)){
+						LCD.drawString("This is color: "+i, 0, 1);
+					}
+					
+				}
+			}
+		}
+		
+	}
+	
+	public void updateMin(ColorSensor.Color c, ColorState s){
+		if(s.rgbInfo.size() == 0){
+			s.rgbMin.r = c.getRed();
+			s.rgbMin.g = c.getGreen();
+			s.rgbMin.b = c.getBlue();
+		}else{
+			if(s.rgbMin.r > c.getRed()){
+				s.rgbMin.r = c.getRed();
+			}
+			if(s.rgbMin.g > c.getGreen()){
+				s.rgbMin.g = c.getGreen();
+			}
+			if(s.rgbMin.g > c.getGreen()){
+				s.rgbMin.g = c.getGreen();
+			}
+		}
+	}
+	
+	public void updateMax(ColorSensor.Color c, ColorState s){
+		if(s.rgbInfo.size() == 0){
+			s.rgbMax.r = c.getRed();
+			s.rgbMax.g = c.getGreen();
+			s.rgbMax.b = c.getBlue();
+		}else{
+			if(s.rgbMin.r < c.getRed()){
+				s.rgbMax.r = c.getRed();
+			}
+			if(s.rgbMin.g < c.getGreen()){
+				s.rgbMax.g = c.getGreen();
+			}
+			if(s.rgbMin.g < c.getGreen()){
+				s.rgbMax.g = c.getGreen();
+			}
+		}
+	}
+	
+	public void updateAvg(ColorSensor.Color c, ColorState s){
+		if(s.rgbInfo.size() == 0){
+			s.rgbAvg.r = c.getRed();
+			s.rgbAvg.g = c.getGreen();
+			s.rgbAvg.b = c.getBlue();
+		}else{
+			int size = s.rgbInfo.size();
+			s.rgbAvg.r = (s.rgbAvg.r*size + c.getRed())/(size+1);
+			s.rgbAvg.g = (s.rgbAvg.g*size + c.getGreen())/(size+1);
+			s.rgbAvg.b = (s.rgbAvg.b*size + c.getBlue())/(size+1);
+		}
+	}
 	
 	public void displayColor(String name, int raw, int calibreated, int line){
 		LCD.drawString(name, 0, line);
@@ -109,17 +181,32 @@ public class ControlColorSensor {
 		return colorNames[vals.getColor() + 1];
 	}
 	
-	//test FlootLight
-	public void testFlootLight(ColorSensor cs){
-		
-		for(int i=0; i< 14; i++){
-			cs.setFloodlight(i-1);
-			LCD.drawString("Color: "+colorNames[i], 0, 0);
-			ColorSensor.Color vals = cs.getColor();
-			LCD.drawString(colorNames[vals.getColor() + 1], 0, 1);
-			Button.waitForAnyPress();
-			LCD.clear();
-		}
+}
+
+//element de table colorType
+class ColorState{
+	
+	public RgbState rgbMin;
+	public RgbState rgbMax;
+	public RgbState rgbAvg;
+	public ArrayList<ColorSensor.Color> rgbInfo;
+	
+	public ColorState(){
+		rgbInfo = new ArrayList<ColorSensor.Color>();
 	}
 	
+}
+
+
+//element de table
+class RgbState{
+	
+	public int r;
+	public int g;
+	public int b;
+	public RgbState(int r, int g, int b){
+		this.r = r;
+		this.g = g;
+		this.b = b;
+	}
 }
