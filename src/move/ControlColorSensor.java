@@ -15,10 +15,10 @@ public class ControlColorSensor {
 	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
-	private LinkedList<ArrayList> colorType;
+	private LinkedList<ArrayList<ColorSensor.Color>> colorType;
 	
 	public ControlColorSensor(){
-		colorType = new LinkedList<ArrayList>();
+		colorType = new LinkedList<ArrayList<ColorSensor.Color>>();
 	}
 	
 	public void colorReader(ColorSensor cs){
