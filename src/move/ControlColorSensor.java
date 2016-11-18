@@ -46,10 +46,12 @@ public class ControlColorSensor {
 				LCD.clear(3);
 				LCD.clear(4);
 				LCD.clear(5);
+				LCD.clear(6);
 				
 				LCD.drawString(colorType.rgbMin.r+" "+colorType.rgbMin.g+" "+colorType.rgbMin.b, 0, 3);
 				LCD.drawString(colorType.rgbMax.r+" "+colorType.rgbMax.g+" "+colorType.rgbMax.b, 0, 4);
 				LCD.drawString(colorType.rgbAvg.r+" "+colorType.rgbAvg.g+" "+colorType.rgbAvg.b, 0, 5);
+				LCD.drawString(vals.getRed()+" "+vals.getGreen()+" "+vals.getBlue(), 0, 6);
 				try {
 	                Thread.sleep(1000);
 	            } catch (InterruptedException ie)
@@ -64,21 +66,26 @@ public class ControlColorSensor {
 	public void colorChecker(ColorSensor cs){
 		LCD.clearDisplay();
 		while(!Button.ENTER.isDown()){
-			if(Button.LEFT.isDown()){
-				LCD.clear(1);
-				LCD.drawString("Ready to check color", 0, 0);
+				LCD.drawString("---Check Color---", 0, 0);
 				int r,g,b;
 				int size = colorTypeList.size();
 				ColorSensor.Color vals = cs.getColor();
-				r = vals.getRed(); g = vals.getGreen();
+				r = vals.getRed(); 
+				g = vals.getGreen();
 				b = vals.getBlue();
-				for(int i = 0; i < size; i++){
+				int i;
+				for(i = 0; i < size; i++){
 					ColorState s = colorTypeList.get(i);
 					if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
-							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
-						LCD.drawString("This is color: "+(i+1), 0, 1);
-					}
-					//add verifier avg
+							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)) break;
+				}
+				if(i< size){
+					LCD.clear(1);
+					LCD.drawString("This is color: "+(i+1), 0, 1);
+				}else
+				{
+					LCD.clear(1);
+					LCD.drawString("No Color", 0, 1);
 				}
 				try {
 	                Thread.sleep(1000);
@@ -86,8 +93,6 @@ public class ControlColorSensor {
 	            {
 	              
 	            }
-			//LCD.drawString(colorNames[vals.getColor() + 1], 0, 1);
-			}
 		}
 		
 	}
@@ -104,8 +109,8 @@ public class ControlColorSensor {
 			if(s.rgbMin.g > c.getGreen()){
 				s.rgbMin.g = c.getGreen();
 			}
-			if(s.rgbMin.g > c.getGreen()){
-				s.rgbMin.g = c.getGreen();
+			if(s.rgbMin.b > c.getBlue()){
+				s.rgbMin.b = c.getBlue();
 			}
 		}
 	}
@@ -116,14 +121,14 @@ public class ControlColorSensor {
 			s.rgbMax.g = c.getGreen();
 			s.rgbMax.b = c.getBlue();
 		}else{
-			if(s.rgbMin.r < c.getRed()){
+			if(s.rgbMax.r < c.getRed()){
 				s.rgbMax.r = c.getRed();
 			}
-			if(s.rgbMin.g < c.getGreen()){
+			if(s.rgbMax.g < c.getGreen()){
 				s.rgbMax.g = c.getGreen();
 			}
-			if(s.rgbMin.g < c.getGreen()){
-				s.rgbMax.g = c.getGreen();
+			if(s.rgbMax.b < c.getBlue()){
+				s.rgbMax.b = c.getBlue();
 			}
 		}
 	}
@@ -214,7 +219,6 @@ public class ControlColorSensor {
 
 //element de table colorTypeList
 class ColorState{
-	public int test = 1;
 	public RgbState rgbMin;
 	public RgbState rgbMax;
 	public RgbState rgbAvg;
