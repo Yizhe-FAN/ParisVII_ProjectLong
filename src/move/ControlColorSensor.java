@@ -21,19 +21,19 @@ public class ControlColorSensor {
 	public void colorReader(ColorSensor cs){
 		while(!Button.ESCAPE.isDown()){
 			if(Button.RIGHT.isDown()){
-				ColorState clst = new ColorState();
-				colorType.add(clst);
+				ColorState exempleList = new ColorState();
+				colorType.add(exempleList);
 				LCD.drawString("Set color: "+colorType.size(), 0, 1);
 			}
 			if(Button.LEFT.isDown()){
 				int size = colorType.size();
-				ColorState handleList = colorType.get(size-1);
+				ColorState exempleList = colorType.get(size-1);
 				ColorSensor.Color vals = cs.getColor();
-				updateMin(vals, handleList);
-				updateMax(vals, handleList);
-				updateAvg(vals, handleList);
-				handleList.rgbInfo.add(vals);
-				LCD.drawString("Get info of color: "+handleList.rgbInfo.size()+" times", 0, 2);
+				updateMin(vals, exempleList);
+				updateMax(vals, exempleList);
+				updateAvg(vals, exempleList);
+				exempleList.rgbInfo.add(vals);
+				LCD.drawString("Get info of color: "+exempleList.rgbInfo.size()+" times", 0, 2);
 			}
 		}
 		
@@ -190,9 +190,9 @@ class ColorState{
 	public RgbState rgbAvg;
 	public ArrayList<ColorSensor.Color> rgbInfo;
 	
-	public ColorState(){
+	/*public ColorState(){
 		rgbInfo = new ArrayList<ColorSensor.Color>();
-	}
+	}*/
 	
 }
 
@@ -203,9 +203,9 @@ class RgbState{
 	public int r;
 	public int g;
 	public int b;
-	public RgbState(int r, int g, int b){
+	/*public RgbState(int r, int g, int b){
 		this.r = r;
 		this.g = g;
 		this.b = b;
-	}
+	}*/
 }
