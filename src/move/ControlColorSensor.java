@@ -12,51 +12,81 @@ public class ControlColorSensor {
 	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
-	private ArrayList<ColorState> colorType;
+	private ArrayList<ColorState> colorTypeList;
 	
 	public ControlColorSensor(){
-		colorType = new ArrayList<ColorState>();
+		colorTypeList = new ArrayList<ColorState>();
+
 	}
 	
 	public void colorReader(ColorSensor cs){
 		while(!Button.ESCAPE.isDown()){
 			if(Button.RIGHT.isDown()){
-				ColorState exempleList = new ColorState();
-				colorType.add(exempleList);
-				LCD.drawString("Set color: "+colorType.size(), 0, 1);
+				ColorState colorType = new ColorState();
+				colorTypeList.add(colorType);
+				LCD.drawString("Set color: "+colorTypeList.size(), 0, 1);
+				try {
+	                Thread.sleep(1000);
+	            } catch (InterruptedException ie)
+	            {
+	              
+	            }
 			}
 			if(Button.LEFT.isDown()){
-				int size = colorType.size();
-				ColorState exempleList = colorType.get(size-1);
+				int size = colorTypeList.size();
+				//LCD.drawString(""+size, 0, 2);
+				//LCD.drawInt(colorTypeList.get(size-1).test, 0, 3);
+				ColorState colorType = colorTypeList.get(size-1);
 				ColorSensor.Color vals = cs.getColor();
-				updateMin(vals, exempleList);
-				updateMax(vals, exempleList);
-				updateAvg(vals, exempleList);
-				exempleList.rgbInfo.add(vals);
-				LCD.drawString("Get info of color: "+exempleList.rgbInfo.size()+" times", 0, 2);
+				updateMin(vals, colorType);
+				updateMax(vals, colorType);
+				updateAvg(vals, colorType);
+				colorType.rgbInfo.add(vals);
+				LCD.drawString("Get: "+colorType.rgbInfo.size()+" times", 0, 2);
+				LCD.clear(3);
+				LCD.clear(4);
+				LCD.clear(5);
+				
+				LCD.drawString(colorType.rgbMin.r+" "+colorType.rgbMin.g+" "+colorType.rgbMin.b, 0, 3);
+				LCD.drawString(colorType.rgbMax.r+" "+colorType.rgbMax.g+" "+colorType.rgbMax.b, 0, 4);
+				LCD.drawString(colorType.rgbAvg.r+" "+colorType.rgbAvg.g+" "+colorType.rgbAvg.b, 0, 5);
+				try {
+	                Thread.sleep(1000);
+	            } catch (InterruptedException ie)
+	            {
+	              
+	            }
 			}
 		}
 		
 	}
 	
 	public void colorChecker(ColorSensor cs){
-		while(!Button.ESCAPE.isDown()){
+		LCD.clearDisplay();
+		while(!Button.ENTER.isDown()){
 			if(Button.LEFT.isDown()){
-				LCD.clearDisplay();
+				LCD.clear(1);
+				LCD.drawString("Ready to check color", 0, 0);
 				int r,g,b;
-				int size = colorType.size();
+				int size = colorTypeList.size();
 				ColorSensor.Color vals = cs.getColor();
 				r = vals.getRed(); g = vals.getGreen();
 				b = vals.getBlue();
-				for(int i = 0; i < size; ++i){
-					ColorState s = colorType.get(i);
-					if((r>s.rgbMin.r && g>s.rgbMin.g && b>s.rgbMin.b)&&
-							(r<s.rgbMax.r && g<s.rgbMax.g && b<s.rgbMax.b)){
-						LCD.drawString("This is color: "+i, 0, 1);
-						break;
+				for(int i = 0; i < size; i++){
+					ColorState s = colorTypeList.get(i);
+					if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
+							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
+						LCD.drawString("This is color: "+(i+1), 0, 1);
 					}
 					//add verifier avg
 				}
+				try {
+	                Thread.sleep(1000);
+	            } catch (InterruptedException ie)
+	            {
+	              
+	            }
+			//LCD.drawString(colorNames[vals.getColor() + 1], 0, 1);
 			}
 		}
 		
@@ -182,17 +212,20 @@ public class ControlColorSensor {
 	
 }
 
-//element de table colorType
+//element de table colorTypeList
 class ColorState{
-	
+	public int test = 1;
 	public RgbState rgbMin;
 	public RgbState rgbMax;
 	public RgbState rgbAvg;
 	public ArrayList<ColorSensor.Color> rgbInfo;
 	
-	/*public ColorState(){
+	public ColorState(){
 		rgbInfo = new ArrayList<ColorSensor.Color>();
-	}*/
+		rgbMin = new RgbState(0);
+		rgbMax = new RgbState(0);
+		rgbAvg = new RgbState(0);
+	}
 	
 }
 
@@ -203,9 +236,9 @@ class RgbState{
 	public int r;
 	public int g;
 	public int b;
-	/*public RgbState(int r, int g, int b){
-		this.r = r;
-		this.g = g;
-		this.b = b;
-	}*/
+	public RgbState(int v){
+		r = v;
+		g = v;
+		b = v;
+	}
 }
