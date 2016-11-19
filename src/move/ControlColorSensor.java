@@ -73,19 +73,42 @@ public class ControlColorSensor {
 				r = vals.getRed(); 
 				g = vals.getGreen();
 				b = vals.getBlue();
+				ArrayList<ColorState> intersect = new ArrayList<ColorState>();
+				ArrayList<Integer> indices = new ArrayList<Integer>();
 				int i;
 				for(i = 0; i < size; i++){
 					ColorState s = colorTypeList.get(i);
 					if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
-							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)) break;
+							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
+						intersect.add(s);
+						indices.add(i);
+					}
 				}
-				if(i< size){
+				if(intersect.size()== 0){
 					LCD.clear(1);
-					LCD.drawString("This is color: "+(i+1), 0, 1);
-				}else
-				{
-					LCD.clear(1);
+					LCD.clear(2);
 					LCD.drawString("No Color", 0, 1);
+				}
+				else if(intersect.size() == 1){
+					LCD.clear(1);
+					LCD.clear(2);
+					LCD.drawString("This is color: "+(indices.get(0)+1), 0, 1);
+				}
+				else
+				{
+					LCD.drawString("Intersection", 0, 2);
+					int indice = 0;
+					double min = Double.MAX_VALUE;
+					for(int j=0; j < intersect.size();j++){
+						ColorState tempCS = intersect.get(j);
+						double distance = Math.pow(r-tempCS.rgbAvg.r,2)+Math.pow(g-tempCS.rgbAvg.g,2)+Math.pow(b-tempCS.rgbAvg.b, 2);
+						if(distance < min) {
+							min = distance;
+							indice = indices.get(j);
+						}
+					}
+					LCD.clear(1);
+					LCD.drawString("This is color: "+(indice+1), 0, 1);
 				}
 				try {
 	                Thread.sleep(1000);
