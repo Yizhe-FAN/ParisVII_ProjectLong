@@ -12,11 +12,11 @@ public class ControlColorSensor {
 	private int colors[] = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.NONE};
 	private String colorNames[] = {"None", "Red", "Green", "Blue", "Yellow", "Megenta",
 			"Orange", "White", "Black", "Pink", "Grey", "Light Grey", "Dark Grey", "Cyan"};
-	private ArrayList<ColorState> colorTypeList;
+	public static ArrayList<ColorState> colorTypeList;
 	
 	public ControlColorSensor(){
-		colorTypeList = new ArrayList<ColorState>();
-
+		if(colorTypeList == null)
+			colorTypeList = new ArrayList<ColorState>();
 	}
 	
 	public void colorReader(ColorSensor cs){

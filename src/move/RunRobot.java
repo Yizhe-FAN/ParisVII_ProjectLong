@@ -1,8 +1,6 @@
 package move;
 
-import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
-import lejos.nxt.LCD;
 
 public class RunRobot {
 	
