@@ -17,7 +17,6 @@ public class FileHandler {
 			File file =new File("ListBackUp.txt");
 			if(!file.exists()){
 				file.createNewFile();
-			}else{
 				LCD.drawString("File is not exists!", 0, 6);
 			}
 			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
@@ -25,14 +24,17 @@ public class FileHandler {
 			for(int i = 0; i < ControlColorSensor.colorTypeList.size(); ++i){
 				String content = "";
 				int index = 1000+i;
-				for(int j = 0; j < ControlColorSensor.colorTypeList.get(i).rgbInfo.size(); ++j){
-					ColorSensor.Color c = ControlColorSensor.colorTypeList.get(i).rgbInfo.get(j);
-					if(j == 0) content+=index+" ";
-					content += c.getRed()+" ";
-					content += c.getGreen()+" ";
-					content += c.getBlue()+" ";
-					if(j == ControlColorSensor.colorTypeList.get(i).rgbInfo.size()-1) content+="\n";
-				}
+				ColorState c = (ColorState)ControlColorSensor.colorTypeList.get(i);
+				content+=index+" ";
+				content+= c.rgbMin.r+" ";
+				content+= c.rgbMin.g+" ";
+				content+= c.rgbMin.b+" ";
+				content+= c.rgbMax.r+" ";
+				content+= c.rgbMax.g+" ";
+				content+= c.rgbMax.b+" ";
+				content+= c.rgbAvg.r+" ";
+				content+= c.rgbAvg.g+" ";
+				content+= c.rgbAvg.b+"\n";
 				bw.write(content);
 			}
 			bw.close();
@@ -44,6 +46,25 @@ public class FileHandler {
 	
 	public void readInList(String fileP){
 		new ControlColorSensor();
+		try{
+			File file =new File("ListBackUp.txt");
+			if(!file.exists()){
+				LCD.drawString("File is not exists!", 0, 6);
+			}else{
+				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
+                BufferedReader bufferedReader = new BufferedReader(r);
+                String lineTxt = null;
+                while((lineTxt = bufferedReader.readLine()) != null){
+                	while(true){
+                		
+                	}
+                }
+                bufferedReader.close();
+                r.close();
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	
 	}
 	
