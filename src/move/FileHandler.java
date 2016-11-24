@@ -2,6 +2,8 @@ package move;
 
 import java.io.*;
 import java.util.*;
+
+import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 
@@ -49,12 +51,23 @@ public class FileHandler {
 			if(!file.exists()){
 				LCD.drawString("File is not exists!", 0, 6);
 			}else{
+				
 				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
                 BufferedReader bufferedReader = new BufferedReader(r);
                 String lineTxt = null;
                 while((lineTxt = bufferedReader.readLine()) != null){
+                	//LCD.drawString(lineTxt.substring(1, 4), 0, 3);
                 	ColorState cs = new ColorState();
-                	char tmpArray[] = lineTxt.toCharArray();
+                	cs.rgbMin.r= Integer.valueOf(lineTxt.substring(1, 4));
+                	cs.rgbMin.g= Integer.valueOf(lineTxt.substring(4, 7));
+                	cs.rgbMin.b= Integer.valueOf(lineTxt.substring(7, 10));
+                	cs.rgbMax.r= Integer.valueOf(lineTxt.substring(11, 14));
+                	cs.rgbMax.g= Integer.valueOf(lineTxt.substring(14, 17));
+                	cs.rgbMax.b= Integer.valueOf(lineTxt.substring(17, 20));
+                	cs.rgbAvg.r= Integer.valueOf(lineTxt.substring(21, 24));
+                	cs.rgbAvg.g= Integer.valueOf(lineTxt.substring(24, 27));
+                	cs.rgbAvg.b= Integer.valueOf(lineTxt.substring(27, 30));
+                	/*char tmpArray[] = lineTxt.toCharArray();
                 	int i = 0, size = ControlColorSensor.colorTypeList.size();
                 	while(i != tmpArray.length-1){
                 		String tmp;
@@ -92,8 +105,9 @@ public class FileHandler {
                 			cs.rgbAvg.b = (int)Integer.valueOf(tmp);
                 			i += 10;
                 		}
-                	}
-                	ControlColorSensor.colorTypeList.add(cs);
+                	}*/
+                	//ControlColorSensor.colorTypeList.add(cs);
+                	Button.waitForAnyPress();
                 }
                 bufferedReader.close();
                 r.close();
