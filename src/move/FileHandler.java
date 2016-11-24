@@ -2,7 +2,6 @@ package move;
 
 import java.io.*;
 import java.util.*;
-
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 
@@ -23,18 +22,17 @@ public class FileHandler {
 			BufferedWriter bw = new BufferedWriter(r);
 			for(int i = 0; i < ControlColorSensor.colorTypeList.size(); ++i){
 				String content = "";
-				int index = 1000+i;
 				ColorState c = (ColorState)ControlColorSensor.colorTypeList.get(i);
-				content+=index+" ";
-				content+= c.rgbMin.r+" ";
-				content+= c.rgbMin.g+" ";
-				content+= c.rgbMin.b+" ";
-				content+= c.rgbMax.r+" ";
-				content+= c.rgbMax.g+" ";
-				content+= c.rgbMax.b+" ";
-				content+= c.rgbAvg.r+" ";
-				content+= c.rgbAvg.g+" ";
-				content+= c.rgbAvg.b+"\n";
+				content+="i";
+				content+= format(c.rgbMin.r);
+				content+= format(c.rgbMin.g);
+				content+= format(c.rgbMin.b)+"a";
+				content+= format(c.rgbMax.r);
+				content+= format(c.rgbMax.g);
+				content+= format(c.rgbMax.b)+"v";
+				content+= format(c.rgbAvg.r);
+				content+= format(c.rgbAvg.g);
+				content+= format(c.rgbAvg.b)+"\n";
 				bw.write(content);
 			}
 			bw.close();
@@ -55,9 +53,47 @@ public class FileHandler {
                 BufferedReader bufferedReader = new BufferedReader(r);
                 String lineTxt = null;
                 while((lineTxt = bufferedReader.readLine()) != null){
-                	while(true){
-                		
+                	ColorState cs = new ColorState();
+                	char tmpArray[] = lineTxt.toCharArray();
+                	int i = 0, size = ControlColorSensor.colorTypeList.size();
+                	while(i != tmpArray.length-1){
+                		String tmp;
+                		if(tmpArray[i]=='i'){
+                			tmp="";
+                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
+                			cs.rgbMin.r = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
+                			cs.rgbMin.g = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
+                			cs.rgbMin.b = (int)Integer.valueOf(tmp);
+                			i += 10;
+                		}else if(tmpArray[i]=='a'){
+                			tmp="";
+                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
+                			cs.rgbMax.r = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
+                			cs.rgbMax.g = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
+                			cs.rgbMax.b = (int)Integer.valueOf(tmp);
+                			i += 10;
+                		}else if(tmpArray[i]=='v'){
+                			tmp="";
+                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
+                			cs.rgbAvg.r = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
+                			cs.rgbAvg.g = (int)Integer.valueOf(tmp);
+                			tmp="";
+                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
+                			cs.rgbAvg.b = (int)Integer.valueOf(tmp);
+                			i += 10;
+                		}
                 	}
+                	ControlColorSensor.colorTypeList.add(cs);
                 }
                 bufferedReader.close();
                 r.close();
@@ -66,6 +102,16 @@ public class FileHandler {
 			e.printStackTrace();
 		}
 	
+	}
+	
+	public String format(int r){
+		String s="";
+		if(r > 10 && r < 100){
+			return s+"0"+r;
+		}else if(r < 10){
+			return s+"00"+r;
+		}
+		return s+r;
 	}
 	
 }
