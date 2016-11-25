@@ -36,8 +36,11 @@ public class FileHandler {
 				content+= format(c.rgbAvg.r);
 				content+= format(c.rgbAvg.g);
 				content+= format(c.rgbAvg.b);
-				if(i != size-1)		
+				if(i < size-1)		
 					content+="\n";
+				else{
+					content+=" ";
+				}
 				bw.write(content);
 			}
 			bw.close();
@@ -73,6 +76,8 @@ public class FileHandler {
                 		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(24, 27));
                 		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(27, 30));
                 		ControlColorSensor.colorTypeList.add(colorState);
+                		LCD.drawString(""+colorState.rgbAvg.b, 0, 7);
+                		Button.waitForAnyPress();
                 	
                 }
                 bufferedReader.close();
