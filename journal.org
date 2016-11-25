@@ -1,3 +1,9 @@
+* <2016-11-25>
+** Fait:
+   - Etalonnage
+** A faire:
+   - Suivre une ligne
+
 * Lun  7 nov 2016 10:38:32 CET
 ** Fait:
    - montage robot, déplacer sur zone banche et s'arrêter lorsqu'autre couleur
