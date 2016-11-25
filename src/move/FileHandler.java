@@ -22,6 +22,7 @@ public class FileHandler {
 			}
 			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
 			BufferedWriter bw = new BufferedWriter(r);
+			int size =  ControlColorSensor.colorTypeList.size();
 			for(int i = 0; i < ControlColorSensor.colorTypeList.size(); ++i){
 				String content = "";
 				ColorState c = (ColorState)ControlColorSensor.colorTypeList.get(i);
@@ -34,7 +35,9 @@ public class FileHandler {
 				content+= format(c.rgbMax.b)+"v";
 				content+= format(c.rgbAvg.r);
 				content+= format(c.rgbAvg.g);
-				content+= format(c.rgbAvg.b)+"\n";
+				content+= format(c.rgbAvg.b);
+				if(i != size-1)		
+					content+="\n";
 				bw.write(content);
 			}
 			bw.close();
@@ -47,69 +50,35 @@ public class FileHandler {
 	public void readInList(String fileP){
 		new ControlColorSensor();
 		try{
-			File file =new File("ListBackUp.txt");
+			File file =new File(fileP);
 			if(!file.exists()){
 				LCD.drawString("File is not exists!", 0, 6);
 			}else{
-				
+				LCD.drawString("Begin to Read", 0, 5);
+				Button.waitForAnyPress();
 				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
                 BufferedReader bufferedReader = new BufferedReader(r);
                 String lineTxt = null;
                 while((lineTxt = bufferedReader.readLine()) != null){
                 	//LCD.drawString(lineTxt.substring(1, 4), 0, 3);
-                	ColorState cs = new ColorState();
-                	cs.rgbMin.r= Integer.valueOf(lineTxt.substring(1, 4));
-                	cs.rgbMin.g= Integer.valueOf(lineTxt.substring(4, 7));
-                	cs.rgbMin.b= Integer.valueOf(lineTxt.substring(7, 10));
-                	cs.rgbMax.r= Integer.valueOf(lineTxt.substring(11, 14));
-                	cs.rgbMax.g= Integer.valueOf(lineTxt.substring(14, 17));
-                	cs.rgbMax.b= Integer.valueOf(lineTxt.substring(17, 20));
-                	cs.rgbAvg.r= Integer.valueOf(lineTxt.substring(21, 24));
-                	cs.rgbAvg.g= Integer.valueOf(lineTxt.substring(24, 27));
-                	cs.rgbAvg.b= Integer.valueOf(lineTxt.substring(27, 30));
-                	/*char tmpArray[] = lineTxt.toCharArray();
-                	int i = 0, size = ControlColorSensor.colorTypeList.size();
-                	while(i != tmpArray.length-1){
-                		String tmp;
-                		if(tmpArray[i]=='i'){
-                			tmp="";
-                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
-                			cs.rgbMin.r = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
-                			cs.rgbMin.g = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
-                			cs.rgbMin.b = (int)Integer.valueOf(tmp);
-                			i += 10;
-                		}else if(tmpArray[i]=='a'){
-                			tmp="";
-                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
-                			cs.rgbMax.r = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
-                			cs.rgbMax.g = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
-                			cs.rgbMax.b = (int)Integer.valueOf(tmp);
-                			i += 10;
-                		}else if(tmpArray[i]=='v'){
-                			tmp="";
-                			tmp += tmpArray[i+1] + tmpArray[i+2] + tmpArray[i+3];
-                			cs.rgbAvg.r = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+4] + tmpArray[i+5] + tmpArray[i+6];
-                			cs.rgbAvg.g = (int)Integer.valueOf(tmp);
-                			tmp="";
-                			tmp += tmpArray[i+7] + tmpArray[i+8] + tmpArray[i+9];
-                			cs.rgbAvg.b = (int)Integer.valueOf(tmp);
-                			i += 10;
-                		}
-                	}*/
-                	//ControlColorSensor.colorTypeList.add(cs);
-                	Button.waitForAnyPress();
+                	//Button.waitForAnyPress();
+                		ColorState colorState = new ColorState();
+                		colorState.rgbMin.r= Integer.parseInt(lineTxt.substring(1, 4));
+                		colorState.rgbMin.g= Integer.parseInt(lineTxt.substring(4, 7));
+                		colorState.rgbMin.b= Integer.parseInt(lineTxt.substring(7, 10));
+                		colorState.rgbMax.r= Integer.parseInt(lineTxt.substring(11, 14));
+                		colorState.rgbMax.g= Integer.parseInt(lineTxt.substring(14, 17));
+                		colorState.rgbMax.b= Integer.parseInt(lineTxt.substring(17, 20));
+                		colorState.rgbAvg.r= Integer.parseInt(lineTxt.substring(21, 24));
+                		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(24, 27));
+                		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(27, 30));
+                		ControlColorSensor.colorTypeList.add(colorState);
+                	
                 }
                 bufferedReader.close();
+                LCD.clear(5);
+                LCD.drawString("Read finished", 0, 5);
+                Button.waitForAnyPress();
                 r.close();
 			}
 		}catch(IOException e){
