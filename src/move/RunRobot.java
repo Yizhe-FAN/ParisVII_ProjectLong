@@ -35,11 +35,9 @@ public class RunRobot {
 				LCD.drawString("Load and use File!", 0, 4);
 				FileHandler f = new FileHandler();
 				f.readInList("ListBackUp.txt");
-				
 				LCD.clear();
 				ControlColorSensor mColorSensor = new ControlColorSensor();
 				ColorSensor cs = mColorSensor.setColorSenor();
-				
 				//mColorSensor.colorReader(cs);
 				mColorSensor.colorChecker(cs);
 				//f.writeInFile();

@@ -81,9 +81,9 @@ public class FileHandler {
                 	
                 }
                 bufferedReader.close();
-                LCD.clear(5);
-                LCD.drawString("Read finished", 0, 5);
-                Button.waitForAnyPress();
+               // LCD.clear(5);
+               // LCD.drawString("Read finished", 0, 5);
+               // Button.waitForAnyPress();
                 r.close();
 			}
 		}catch(IOException e){
