@@ -18,7 +18,6 @@ public class FileHandler {
 			File file =new File("ListBackUp.txt");
 			if(!file.exists()){
 				file.createNewFile();
-				LCD.drawString("File is not exists!", 0, 6);
 			}
 			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
 			BufferedWriter bw = new BufferedWriter(r);
@@ -63,8 +62,6 @@ public class FileHandler {
 			if(!file.exists()){
 				LCD.drawString("File is not exists!", 0, 6);
 			}else{
-				LCD.drawString("Begin to Read", 0, 5);
-				Button.waitForAnyPress();
 				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
                 BufferedReader bufferedReader = new BufferedReader(r);
                 String lineTxt = "";
@@ -83,8 +80,6 @@ public class FileHandler {
                 		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(21, 24));
                 		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(24, 27));
                 		ControlColorSensor.colorTypeList.add(colorState);
-                		LCD.drawString(""+colorState.rgbAvg.r, 0, 7);
-                		Button.waitForAnyPress();
                 	
                 }
                 bufferedReader.close();

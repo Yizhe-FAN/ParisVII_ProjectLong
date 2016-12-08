@@ -111,11 +111,12 @@ public class ControlColorSensor {
 					LCD.drawString("This is color: "+(indice+1), 0, 1);
 				}
 				try {
-	                Thread.sleep(1000);
+	                Thread.sleep(100);
 	            } catch (InterruptedException ie)
 	            {
 	              
 	            }
+				
 		}
 		
 	}
