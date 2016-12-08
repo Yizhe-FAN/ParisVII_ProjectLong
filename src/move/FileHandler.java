@@ -1,10 +1,6 @@
 package move;
 
 import java.io.*;
-import java.util.*;
-
-import lejos.nxt.Button;
-import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 
 public class FileHandler {
