@@ -23,28 +23,34 @@ public class FileHandler {
 			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
 			BufferedWriter bw = new BufferedWriter(r);
 			int size =  ControlColorSensor.colorTypeList.size();
-			for(int i = 0; i < ControlColorSensor.colorTypeList.size(); ++i){
-				String content = "";
+			String content = "";
+			for(int i = 0; i <= size; i++){
+				
+				if(i < size){
 				ColorState c = (ColorState)ControlColorSensor.colorTypeList.get(i);
-				content+="i";
+				
 				content+= format(c.rgbMin.r);
 				content+= format(c.rgbMin.g);
-				content+= format(c.rgbMin.b)+"a";
+				content+= format(c.rgbMin.b);
+				
 				content+= format(c.rgbMax.r);
 				content+= format(c.rgbMax.g);
-				content+= format(c.rgbMax.b)+"v";
+				content+= format(c.rgbMax.b);
+				
 				content+= format(c.rgbAvg.r);
 				content+= format(c.rgbAvg.g);
 				content+= format(c.rgbAvg.b);
-				if(i < size-1)		
+					
 					content+="\n";
-				else{
-					content+=" ";
 				}
-				bw.write(content);
+				else{
+					content+= "Finish\n";
+				}
+				
 			}
+			bw.write(content);
 			bw.close();
-			r.close();
+			
 		}catch(IOException e){
 			 e.printStackTrace();
 		}
@@ -61,30 +67,27 @@ public class FileHandler {
 				Button.waitForAnyPress();
 				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
                 BufferedReader bufferedReader = new BufferedReader(r);
-                String lineTxt = null;
-                while((lineTxt = bufferedReader.readLine()) != null){
-                	//LCD.drawString(lineTxt.substring(1, 4), 0, 3);
-                	//Button.waitForAnyPress();
+                String lineTxt = "";
+               
+                while(!(lineTxt = bufferedReader.readLine()).equals("Finish")){
+                	
+                		LCD.clear(7);
                 		ColorState colorState = new ColorState();
-                		colorState.rgbMin.r= Integer.parseInt(lineTxt.substring(1, 4));
-                		colorState.rgbMin.g= Integer.parseInt(lineTxt.substring(4, 7));
-                		colorState.rgbMin.b= Integer.parseInt(lineTxt.substring(7, 10));
-                		colorState.rgbMax.r= Integer.parseInt(lineTxt.substring(11, 14));
-                		colorState.rgbMax.g= Integer.parseInt(lineTxt.substring(14, 17));
-                		colorState.rgbMax.b= Integer.parseInt(lineTxt.substring(17, 20));
-                		colorState.rgbAvg.r= Integer.parseInt(lineTxt.substring(21, 24));
-                		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(24, 27));
-                		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(27, 30));
+                		colorState.rgbMin.r= Integer.parseInt(lineTxt.substring(0, 3));
+                		colorState.rgbMin.g= Integer.parseInt(lineTxt.substring(3, 6));
+                		colorState.rgbMin.b= Integer.parseInt(lineTxt.substring(6, 9));
+                		colorState.rgbMax.r= Integer.parseInt(lineTxt.substring(9, 12));
+                		colorState.rgbMax.g= Integer.parseInt(lineTxt.substring(12, 15));
+                		colorState.rgbMax.b= Integer.parseInt(lineTxt.substring(15, 18));
+                		colorState.rgbAvg.r= Integer.parseInt(lineTxt.substring(18, 21));
+                		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(21, 24));
+                		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(24, 27));
                 		ControlColorSensor.colorTypeList.add(colorState);
-                		LCD.drawString(""+colorState.rgbAvg.b, 0, 7);
+                		LCD.drawString(""+colorState.rgbAvg.r, 0, 7);
                 		Button.waitForAnyPress();
                 	
                 }
                 bufferedReader.close();
-               // LCD.clear(5);
-               // LCD.drawString("Read finished", 0, 5);
-               // Button.waitForAnyPress();
-                r.close();
 			}
 		}catch(IOException e){
 			e.printStackTrace();
