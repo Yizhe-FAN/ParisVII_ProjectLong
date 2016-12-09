@@ -78,8 +78,8 @@ public class ControlColorSensor {
 		int i;
 		for(i = 0; i < size; i++){
 			ColorType s = colorTypeList.get(i);
-			if((r>s.rgbMin.r-0 && g>s.rgbMin.g-0 && b>s.rgbMin.b-0)&&
-					(r<s.rgbMax.r+0 && g<s.rgbMax.g+0 && b<s.rgbMax.b+0)){
+			if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
+					(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
 				colorsDetected.add(s);
 				colorIds.add(i);
 			}
@@ -133,8 +133,8 @@ public class ControlColorSensor {
 			int i;
 			for(i = 0; i < size; i++){
 				ColorType s = colorTypeList.get(i);
-				if((r>s.rgbMin.r-0 && g>s.rgbMin.g-0 && b>s.rgbMin.b-0)&&
-						(r<s.rgbMax.r+0 && g<s.rgbMax.g+0 && b<s.rgbMax.b+0)){
+				if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
+						(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
 					colorsDetected.add(s);
 					colorIds.add(i);
 				}
