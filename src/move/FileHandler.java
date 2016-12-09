@@ -14,7 +14,6 @@ public class FileHandler {
 	public void writeInFile(ControlColorSensor controlColorSensor){
 		try{
 			File file = new File("ListBackUp.txt");
-			
 			if(!file.exists()){
 				file.createNewFile();
 			}
@@ -23,28 +22,22 @@ public class FileHandler {
 			int size =  controlColorSensor.colorTypeList.size();
 			String content = "";
 			for(int i = 0; i <= size; i++){
-				
 				if(i < size){
 				ColorType c = (ColorType)controlColorSensor.colorTypeList.get(i);
-				
 				content+= format(c.rgbMin.r);
 				content+= format(c.rgbMin.g);
 				content+= format(c.rgbMin.b);
-				
 				content+= format(c.rgbMax.r);
 				content+= format(c.rgbMax.g);
 				content+= format(c.rgbMax.b);
-				
 				content+= format(c.rgbAvg.r);
 				content+= format(c.rgbAvg.g);
-				content+= format(c.rgbAvg.b);
-					
-					content+="\n";
+				content+= format(c.rgbAvg.b);	
+				content+="\n";
 				}
 				else{
 					content+= "Finish\n";
 				}
-				
 			}
 			bw.write(content);
 			bw.close();

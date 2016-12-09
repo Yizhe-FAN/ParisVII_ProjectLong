@@ -1,18 +1,50 @@
 package move;
+import java.io.File;
 import java.util.ArrayList;
 import lejos.nxt.*;
 import lejos.robotics.Color;
+import lejos.util.TextMenu;
 
-public class ControlColorSensor {
+public class ControlColorSensor{
 	
 	public ArrayList<ColorType> colorTypeList;
 	private ColorSensor colorSensor;
+	private int num;
+	private File file;
 
 	
 	public ControlColorSensor(){
 			colorTypeList = new ArrayList<ColorType>();
 			colorSensor = new ColorSensor(SensorPort.getInstance(0));
 			colorSensor.setFloodlight(Color.WHITE);
+	}
+	
+	public void RunTextMenu(){
+		String []modes={"New Colors","Old Colors"};
+		TextMenu modeMenu = new TextMenu(modes, 1, "File Mode");
+		num = modeMenu.select();
+		file = new File("ListBackUp.txt");
+	}
+	
+	public void RunColorSensor(ControlColorSensor mControlColorSensor){
+		if(num == 0){
+			file.delete();
+			mControlColorSensor.colorReader();
+			//press Enter to next
+			mControlColorSensor.testColorChecker();
+			FileHandler f = new FileHandler();
+			f.writeInFile(mControlColorSensor);
+		}else if(num == 1){
+			if(!file.exists()){
+				LCD.clear();
+				LCD.drawString("file not exists", 0, 0);
+				Button.waitForAnyPress();	
+			}else{
+				FollowLine follow = new FollowLine(mControlColorSensor);
+				follow.loadFile();
+				follow.runFollowLIne();
+			}
+		}
 	}
 	
 	public void colorReader(){
@@ -43,11 +75,7 @@ public class ControlColorSensor {
 				colorType.rgbInfo.add(vals);
 				LCD.clear(2);
 				LCD.drawString("Get: "+colorType.rgbInfo.size()+" times", 0, 2);
-				
-				LCD.clear(3);
-				LCD.clear(4);
-				LCD.clear(5);
-				LCD.clear(6);				
+				LCD.clear(3);LCD.clear(4);LCD.clear(5);LCD.clear(6);				
 				LCD.drawString(colorType.rgbMin.r+" "+colorType.rgbMin.g+" "+colorType.rgbMin.b, 0, 3);
 				LCD.drawString(colorType.rgbMax.r+" "+colorType.rgbMax.g+" "+colorType.rgbMax.b, 0, 4);
 				LCD.drawString(colorType.rgbAvg.r+" "+colorType.rgbAvg.g+" "+colorType.rgbAvg.b, 0, 5);
@@ -70,9 +98,7 @@ public class ControlColorSensor {
 		int r,g,b;
 		int size = colorTypeList.size();
 		ColorSensor.Color vals = colorSensor.getColor();
-		r = vals.getRed(); 
-		g = vals.getGreen();
-		b = vals.getBlue();
+		r = vals.getRed(); g = vals.getGreen(); b = vals.getBlue();
 		ArrayList<ColorType> colorsDetected = new ArrayList<ColorType>();
 		ArrayList<Integer> colorIds = new ArrayList<Integer>();
 		int i;
