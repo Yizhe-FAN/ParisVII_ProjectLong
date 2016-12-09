@@ -1,47 +1,85 @@
 package move;
 
 import java.io.File;
-
-import lejos.nxt.ColorSensor;
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.util.TextMenu;
 
 public class RunRobot {
 	
 	public static void main(String args[]){
-		String []modes={"new","old"};
-		File file =new File("ListBackUp.txt");
+		String []modes={"New Colors","Old Colors"};
+		File file = new File("ListBackUp.txt");
 		TextMenu modeMenu = new TextMenu(modes, 1, "File Mode");
+		ControlColorSensor mControlColorSensor = new ControlColorSensor();
 		int num = modeMenu.select();
-		if(num==0){
-			LCD.drawString("Initialise File!", 0, 4);
+		if(num == 0){
 			file.delete();
-			ControlColorSensor mColorSensor = new ControlColorSensor();
-			ColorSensor cs = mColorSensor.setColorSenor();
+			mControlColorSensor.colorReader();
+			
+			//press Enter to next
+			mControlColorSensor.testColorChecker();
+
 			FileHandler f = new FileHandler();
-			mColorSensor.colorReader(cs);
-			mColorSensor.colorChecker(cs);
-			f.writeInFile();
-		}else if(num==1){
+			f.writeInFile(mControlColorSensor);
+			
+		}else if(num == 1){
+			
 			if(!file.exists()){
-				LCD.drawString("Initialise File!", 0, 4);
-				ControlColorSensor mColorSensor = new ControlColorSensor();
-				ColorSensor cs = mColorSensor.setColorSenor();
-				FileHandler f = new FileHandler();
-				mColorSensor.colorReader(cs);
-				mColorSensor.colorChecker(cs);
-				f.writeInFile();
-			}else{
-				LCD.drawString("Load and use File!", 0, 4);
-				FileHandler f = new FileHandler();
-				f.readInList("ListBackUp.txt");
 				LCD.clear();
-				ControlColorSensor mColorSensor = new ControlColorSensor();
-				ColorSensor cs = mColorSensor.setColorSenor();
-				//mColorSensor.colorReader(cs);
-				mColorSensor.colorChecker(cs);
-				//f.writeInFile();
+				LCD.drawString("file not exists", 0, 0);
+				Button.waitForAnyPress();
 				
+			}
+			else{
+				LCD.clear();
+				LCD.drawString("---Load File---", 0, 0);
+				FileHandler f = new FileHandler();
+				f.readInList("ListBackUp.txt",mControlColorSensor);
+				Button.waitForAnyPress();
+				
+				//press Enter to next
+				mControlColorSensor.testColorChecker();
+				
+				String lastTime = "";
+				Moteur mMoteur = new Moteur();
+				int res;
+				while(!Button.ESCAPE.isDown()){
+					LCD.clear();
+					res = mControlColorSensor.colorChecker();
+					LCD.clear(3);
+					LCD.drawString("res: "+res, 0, 3);
+					LCD.refresh();
+					try {
+		                Thread.sleep(2);
+		            } catch (InterruptedException ie){
+		            	ie.printStackTrace();
+		            }
+					if(mControlColorSensor.colorChecker() == 0){
+						mMoteur.normalMove();
+						if(lastTime == "right"){
+							mMoteur.rotateLeft();
+							lastTime="left";
+						}
+						else
+						{
+							mMoteur.rotateRight();
+							lastTime="right";
+						}
+					}
+					else if(mControlColorSensor.colorChecker()!= 0){
+						mMoteur.normalMove();
+						if(lastTime == "left"){
+							mMoteur.rotateRight();
+							lastTime="right";
+						}
+						else{
+							mMoteur.rotateLeft();
+							lastTime = "left";
+						}
+					}
+					
+				}			
 			}
 		
 		}

@@ -1,45 +1,53 @@
 package move;
 import java.util.ArrayList;
 import lejos.nxt.*;
+import lejos.robotics.Color;
 
 public class ControlColorSensor {
 	
-	public static ArrayList<ColorState> colorTypeList;
+	public ArrayList<ColorType> colorTypeList;
+	private ColorSensor colorSensor;
+
 	
 	public ControlColorSensor(){
-		if(colorTypeList == null)
-			colorTypeList = new ArrayList<ColorState>();
+			colorTypeList = new ArrayList<ColorType>();
+			colorSensor = new ColorSensor(SensorPort.getInstance(0));
+			colorSensor.setFloodlight(Color.WHITE);
 	}
 	
-	public void colorReader(ColorSensor cs){
+	public void colorReader(){
+		LCD.clear();
+		LCD.drawString("---Read Color---", 0, 0);
+		
 		while(!Button.ESCAPE.isDown()){
+			
 			if(Button.RIGHT.isDown()){
-				ColorState colorType = new ColorState();
+				ColorType colorType = new ColorType();
 				colorTypeList.add(colorType);
+				LCD.clear(1);
 				LCD.drawString("Set color: "+colorTypeList.size(), 0, 1);
 				try {
 	                Thread.sleep(1000);
 	            } catch (InterruptedException ie)
 	            {
-	              
+	              ie.printStackTrace();
 	            }
 			}
 			if(Button.LEFT.isDown()){
 				int size = colorTypeList.size();
-				//LCD.drawString(""+size, 0, 2);
-				//LCD.drawInt(colorTypeList.get(size-1).test, 0, 3);
-				ColorState colorType = colorTypeList.get(size-1);
-				ColorSensor.Color vals = cs.getColor();
+				ColorType colorType = colorTypeList.get(size-1);
+				ColorSensor.Color vals = colorSensor.getColor();
 				updateMin(vals, colorType);
 				updateMax(vals, colorType);
 				updateAvg(vals, colorType);
 				colorType.rgbInfo.add(vals);
+				LCD.clear(2);
 				LCD.drawString("Get: "+colorType.rgbInfo.size()+" times", 0, 2);
+				
 				LCD.clear(3);
 				LCD.clear(4);
 				LCD.clear(5);
-				LCD.clear(6);
-				
+				LCD.clear(6);				
 				LCD.drawString(colorType.rgbMin.r+" "+colorType.rgbMin.g+" "+colorType.rgbMin.b, 0, 3);
 				LCD.drawString(colorType.rgbMax.r+" "+colorType.rgbMax.g+" "+colorType.rgbMax.b, 0, 4);
 				LCD.drawString(colorType.rgbAvg.r+" "+colorType.rgbAvg.g+" "+colorType.rgbAvg.b, 0, 5);
@@ -47,71 +55,125 @@ public class ControlColorSensor {
 				try {
 	                Thread.sleep(1000);
 	            } catch (InterruptedException ie){
+	            	ie.printStackTrace();
 	            }
 			}
 		}
 		
 	}
 	
-	public void colorChecker(ColorSensor cs){
-		LCD.clearDisplay();
-		while(!Button.ENTER.isDown()){
-				LCD.drawString("---Check Color---", 0, 0);
-				int r,g,b;
-				int size = colorTypeList.size();
-				ColorSensor.Color vals = cs.getColor();
-				r = vals.getRed(); 
-				g = vals.getGreen();
-				b = vals.getBlue();
-				ArrayList<ColorState> intersect = new ArrayList<ColorState>();
-				ArrayList<Integer> indices = new ArrayList<Integer>();
-				int i;
-				for(i = 0; i < size; i++){
-					ColorState s = colorTypeList.get(i);
-					if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
-							(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
-						intersect.add(s);
-						indices.add(i);
-					}
-				}
-				if(intersect.size()== 0){
-					LCD.clear(1);
-					LCD.clear(2);
-					LCD.drawString("No Color", 0, 1);
-				}
-				else if(intersect.size() == 1){
-					LCD.clear(1);
-					LCD.clear(2);
-					LCD.drawString("This is color: "+(indices.get(0)+1), 0, 1);
-				}
-				else
-				{
-					LCD.drawString("Intersection", 0, 2);
-					int indice = 0;
-					double min = Double.MAX_VALUE;
-					for(int j=0; j < intersect.size();j++){
-						ColorState tempCS = intersect.get(j);
-						double distance = Math.pow(r-tempCS.rgbAvg.r,2)+Math.pow(g-tempCS.rgbAvg.g,2)+Math.pow(b-tempCS.rgbAvg.b, 2);
-						if(distance < min) {
-							min = distance;
-							indice = indices.get(j);
-						}
-					}
-					LCD.clear(1);
-					LCD.drawString("This is color: "+(indice+1), 0, 1);
-				}
-				try {
-	                Thread.sleep(1000);
-	            } catch (InterruptedException ie)
-	            {
-	              
-	            }
-				
+	
+	public int colorChecker(){
+		LCD.clear();
+		int res;
+		LCD.drawString("---Check Color---", 0, 0);
+		int r,g,b;
+		int size = colorTypeList.size();
+		ColorSensor.Color vals = colorSensor.getColor();
+		r = vals.getRed(); 
+		g = vals.getGreen();
+		b = vals.getBlue();
+		ArrayList<ColorType> colorsDetected = new ArrayList<ColorType>();
+		ArrayList<Integer> colorIds = new ArrayList<Integer>();
+		int i;
+		for(i = 0; i < size; i++){
+			ColorType s = colorTypeList.get(i);
+			if((r>s.rgbMin.r-0 && g>s.rgbMin.g-0 && b>s.rgbMin.b-0)&&
+					(r<s.rgbMax.r+0 && g<s.rgbMax.g+0 && b<s.rgbMax.b+0)){
+				colorsDetected.add(s);
+				colorIds.add(i);
+			}
 		}
-		
+		if(colorsDetected.size()== 0){
+			LCD.clear(1);
+			LCD.clear(2);
+			LCD.drawString("No Color", 0, 1);
+			res =  0;
+		}
+		else if(colorsDetected.size() == 1){
+			LCD.clear(1);
+			LCD.clear(2);
+			LCD.drawString("This is color: "+(colorIds.get(0)+1), 0, 1);
+			res =  colorIds.get(0)+1;
+		}
+		else
+		{	
+			LCD.drawString("colorsDetected", 0, 2);
+			int indice = 0;
+			double min = Double.MAX_VALUE;
+			for(int j=0; j < colorsDetected.size();j++){
+				ColorType tempCS = colorsDetected.get(j);
+				double distance = Math.pow(r-tempCS.rgbAvg.r,2)+Math.pow(g-tempCS.rgbAvg.g,2)+Math.pow(b-tempCS.rgbAvg.b, 2);
+				if(distance < min) {
+					min = distance;
+					indice = colorIds.get(j);
+				}
+			}
+			LCD.clear(1);
+			LCD.drawString("This is color: "+(indice+1), 0, 1);
+			res = indice+1;
+		}
+		return res;	
 	}
 	
-	public void updateMin(ColorSensor.Color c, ColorState s){
+	public void testColorChecker(){
+		LCD.clear();
+		LCD.drawString("---Check Color---", 0, 0);
+		int r,g,b;
+		int size = colorTypeList.size();
+		
+		while(!Button.ENTER.isDown()){
+
+			ColorSensor.Color vals = colorSensor.getColor();
+			r = vals.getRed(); 
+			g = vals.getGreen();
+			b = vals.getBlue();
+			ArrayList<ColorType> colorsDetected = new ArrayList<ColorType>();
+			ArrayList<Integer> colorIds = new ArrayList<Integer>();
+			int i;
+			for(i = 0; i < size; i++){
+				ColorType s = colorTypeList.get(i);
+				if((r>s.rgbMin.r-0 && g>s.rgbMin.g-0 && b>s.rgbMin.b-0)&&
+						(r<s.rgbMax.r+0 && g<s.rgbMax.g+0 && b<s.rgbMax.b+0)){
+					colorsDetected.add(s);
+					colorIds.add(i);
+				}
+			}
+			if(colorsDetected.size()== 0){
+				LCD.clear(1);
+				LCD.clear(2);
+				LCD.drawString("No Color", 0, 1);
+			}
+			else if(colorsDetected.size() == 1){
+				LCD.clear(1);
+				LCD.clear(2);
+				LCD.drawString("This is color: "+(colorIds.get(0)+1), 0, 1);
+			}
+			else
+			{
+				LCD.drawString("colorsDetected", 0, 2);
+				int indice = 0;
+				double min = Double.MAX_VALUE;
+				for(int j=0; j < colorsDetected.size();j++){
+					ColorType tempCS = colorsDetected.get(j);
+					double distance = Math.pow(r-tempCS.rgbAvg.r,2)+Math.pow(g-tempCS.rgbAvg.g,2)+Math.pow(b-tempCS.rgbAvg.b, 2);
+					if(distance < min) {
+						min = distance;
+						indice = colorIds.get(j);
+					}
+				}
+				LCD.clear(1);
+				LCD.drawString("This is color: "+(indice+1), 0, 1);
+			}
+			try {
+	            Thread.sleep(2);
+	        } catch (InterruptedException ie){
+	        	ie.printStackTrace();
+	        }
+		}
+	}
+	
+	public void updateMin(ColorSensor.Color c, ColorType s){
 		if(s.rgbInfo.size() == 0){
 			s.rgbMin.r = c.getRed();
 			s.rgbMin.g = c.getGreen();
@@ -129,7 +191,7 @@ public class ControlColorSensor {
 		}
 	}
 	
-	public void updateMax(ColorSensor.Color c, ColorState s){
+	public void updateMax(ColorSensor.Color c, ColorType s){
 		if(s.rgbInfo.size() == 0){
 			s.rgbMax.r = c.getRed();
 			s.rgbMax.g = c.getGreen();
@@ -147,7 +209,7 @@ public class ControlColorSensor {
 		}
 	}
 	
-	public void updateAvg(ColorSensor.Color c, ColorState s){
+	public void updateAvg(ColorSensor.Color c, ColorType s){
 		if(s.rgbInfo.size() == 0){
 			s.rgbAvg.r = c.getRed();
 			s.rgbAvg.g = c.getGreen();
@@ -160,22 +222,16 @@ public class ControlColorSensor {
 		}
 	}
 	
-	public ColorSensor setColorSenor(){
-		ColorSensor cs = new ColorSensor(SensorPort.getInstance(0));
-		LCD.clear();
-		return cs;
-	}
-	
 }
 
 //element de table colorTypeList
-class ColorState{
+class ColorType{
 	public RgbState rgbMin;
 	public RgbState rgbMax;
 	public RgbState rgbAvg;
 	public ArrayList<ColorSensor.Color> rgbInfo;
 	
-	public ColorState(){
+	public ColorType(){
 		rgbInfo = new ArrayList<ColorSensor.Color>();
 		rgbMin = new RgbState(0);
 		rgbMax = new RgbState(0);

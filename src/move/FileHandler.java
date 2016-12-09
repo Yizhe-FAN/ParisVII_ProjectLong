@@ -1,6 +1,8 @@
 package move;
 
 import java.io.*;
+
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class FileHandler {
@@ -9,20 +11,21 @@ public class FileHandler {
 	
 	}
 	
-	public void writeInFile(){
+	public void writeInFile(ControlColorSensor controlColorSensor){
 		try{
-			File file =new File("ListBackUp.txt");
+			File file = new File("ListBackUp.txt");
+			
 			if(!file.exists()){
 				file.createNewFile();
 			}
 			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
 			BufferedWriter bw = new BufferedWriter(r);
-			int size =  ControlColorSensor.colorTypeList.size();
+			int size =  controlColorSensor.colorTypeList.size();
 			String content = "";
 			for(int i = 0; i <= size; i++){
 				
 				if(i < size){
-				ColorState c = (ColorState)ControlColorSensor.colorTypeList.get(i);
+				ColorType c = (ColorType)controlColorSensor.colorTypeList.get(i);
 				
 				content+= format(c.rgbMin.r);
 				content+= format(c.rgbMin.g);
@@ -51,32 +54,30 @@ public class FileHandler {
 		}
 	}
 	
-	public void readInList(String fileP){
-		new ControlColorSensor();
+	public void readInList(String fileP,ControlColorSensor controlColorSensor){
+		
 		try{
-			File file =new File(fileP);
+			File file = new File(fileP);
 			if(!file.exists()){
-				LCD.drawString("File is not exists!", 0, 6);
+				LCD.clear();
+				LCD.drawString("File is not exists!", 0, 0);
+				Button.waitForAnyPress();
 			}else{
 				InputStreamReader r = new InputStreamReader(new FileInputStream(file));
                 BufferedReader bufferedReader = new BufferedReader(r);
-                String lineTxt = "";
-               
+                String lineTxt = "";              
                 while(!(lineTxt = bufferedReader.readLine()).equals("Finish")){
-                	
-                		LCD.clear(7);
-                		ColorState colorState = new ColorState();
-                		colorState.rgbMin.r= Integer.parseInt(lineTxt.substring(0, 3));
-                		colorState.rgbMin.g= Integer.parseInt(lineTxt.substring(3, 6));
-                		colorState.rgbMin.b= Integer.parseInt(lineTxt.substring(6, 9));
-                		colorState.rgbMax.r= Integer.parseInt(lineTxt.substring(9, 12));
-                		colorState.rgbMax.g= Integer.parseInt(lineTxt.substring(12, 15));
-                		colorState.rgbMax.b= Integer.parseInt(lineTxt.substring(15, 18));
-                		colorState.rgbAvg.r= Integer.parseInt(lineTxt.substring(18, 21));
-                		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(21, 24));
-                		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(24, 27));
-                		ControlColorSensor.colorTypeList.add(colorState);
-                	
+            		ColorType colorState = new ColorType();
+            		colorState.rgbMin.r= Integer.parseInt(lineTxt.substring(0, 3));
+            		colorState.rgbMin.g= Integer.parseInt(lineTxt.substring(3, 6));
+            		colorState.rgbMin.b= Integer.parseInt(lineTxt.substring(6, 9));
+            		colorState.rgbMax.r= Integer.parseInt(lineTxt.substring(9, 12));
+            		colorState.rgbMax.g= Integer.parseInt(lineTxt.substring(12, 15));
+            		colorState.rgbMax.b= Integer.parseInt(lineTxt.substring(15, 18));
+            		colorState.rgbAvg.r= Integer.parseInt(lineTxt.substring(18, 21));
+            		colorState.rgbAvg.g= Integer.parseInt(lineTxt.substring(21, 24));
+            		colorState.rgbAvg.b= Integer.parseInt(lineTxt.substring(24, 27));
+            		controlColorSensor.colorTypeList.add(colorState);           	
                 }
                 bufferedReader.close();
 			}
