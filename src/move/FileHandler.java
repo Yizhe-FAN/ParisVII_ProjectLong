@@ -7,13 +7,22 @@ import lejos.nxt.LCD;
 
 public class FileHandler {
 	
-	FileHandler(){
+	String fileName;
+	File file;
 	
+	FileHandler(String fileName){
+		this.fileName = fileName;
+		file = new File(fileName);
+	}
+	
+	
+	public void deleteFile(){
+		file.delete();
 	}
 	
 	public void writeInFile(ControlColorSensor controlColorSensor){
 		try{
-			File file = new File("ListBackUp.txt");
+			
 			if(!file.exists()){
 				file.createNewFile();
 			}
@@ -47,10 +56,9 @@ public class FileHandler {
 		}
 	}
 	
-	public void readInList(String fileP,ControlColorSensor controlColorSensor){
+	public void readInList(ControlColorSensor controlColorSensor){
 		
 		try{
-			File file = new File(fileP);
 			if(!file.exists()){
 				LCD.clear();
 				LCD.drawString("File is not exists!", 0, 0);
