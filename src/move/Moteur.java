@@ -13,12 +13,16 @@ public class Moteur {
 		//Motor.C.forward();
 	}
 		
-	public void rotateLeft(){
-		Motor.A.setSpeed(getSpeed() + 50);
+	public void rotateLeft(int calibrate){
+		//Motor.B.setSpeed(Motor.B.getSpeed()*times);
+		//Motor.B.setSpeed(-Motor.B.getSpeed());
+		Motor.A.setSpeed(Motor.A.getSpeed()+calibrate);
 	}
 	
-	public void rotateRight(){
-		Motor.B.setSpeed(getSpeed() + 50);
+	public void rotateRight(int calibrate){
+		//Motor.A.setSpeed(-Motor.A.getSpeed());
+		Motor.B.setSpeed(Motor.B.getSpeed()+calibrate);
+		//Motor.A.setSpeed(Motor.A.getSpeed()-25*times);
 	}
 	
 	public void stop(){
