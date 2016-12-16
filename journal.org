@@ -1,3 +1,9 @@
+* Ven 16 déc 2016 11:40:07 CET
+** Fait:
+   - Etalonnage semble ok sur le jalon
+   - Suivi de ligne pas trop mal
+** A faire:
+   - Revoir le suivi de ligne pour le fiabiliser et faire que le robot soit plus rapide
 * <2016-12-09>
 ** Fait:
    - Un algo de suivi de ligne qui ne marche pas du tout!
