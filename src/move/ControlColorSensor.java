@@ -10,9 +10,13 @@ public class ControlColorSensor{
 	private ColorSensor colorSensor;
 
 	
-	public ControlColorSensor(){
+	public ControlColorSensor(int port){
 			colorTypeList = new ArrayList<ColorType>();
-			colorSensor = new ColorSensor(SensorPort.getInstance(0));
+			if(port == 1){
+				colorSensor = new ColorSensor(SensorPort.getInstance(0));
+			}else if(port == 2){
+				colorSensor = new ColorSensor(SensorPort.getInstance(1));
+			}
 			colorSensor.setFloodlight(Color.WHITE);
 	}
 	

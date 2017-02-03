@@ -17,7 +17,7 @@ public class Menu {
 	public void startUp(){
 		selectNumber = mainMenu.select();
 		FileHandler colorsFileHandler = new FileHandler(fileSystem[0]);
-		ControlColorSensor mControlColorSensor = new ControlColorSensor();
+		ControlColorSensor mControlColorSensor = new ControlColorSensor(1);
 		
 		switch (selectNumber){
 			case 0:
