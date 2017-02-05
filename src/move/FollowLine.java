@@ -10,6 +10,8 @@ public class FollowLine {
 	String[] items = {"One Sensor","Two Sensor"};
 	TextMenu mainMenu;
 	int selectNumber;
+	static int mline = 1;
+	int addTime = 0;
 	
 	public FollowLine(){
 		LCD.clear();
@@ -89,7 +91,10 @@ public class FollowLine {
 	public void runFollowLineMode2(ControlColorSensor sensor1, ControlColorSensor sensor2){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
-		int res1, res2, time = 1;
+		int res1, res2, times = 1;
+		
+		Wait mwait = new Wait(50);
+		Timer mtimer = new Timer(200);
 		
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(400);
@@ -105,31 +110,76 @@ public class FollowLine {
 			
 			while((!Button.ESCAPE.isDown()) && (res1 != 1) && (res2 == 1)){
 				//turn right
-				Motor.A.setSpeed(400 - 50*time);
-				Motor.B.setSpeed(400);
+				if(mtimer.ok == 1)
+					mtimer.start();
+				if(mline == 1){
+					Motor.A.setSpeed(400 - 100);
+					Motor.B.setSpeed(400);
+				}/*else{
+					Motor.A.setSpeed(400 - 100*times);
+					Motor.B.setSpeed(400);
+					if(mwait.ok == 1)
+						mwait.start();
+					if(addTime == 1){
+						times++;
+						addTime = 0;
+						mwait.ok = 1;
+					}
+				}*/
 				res1 = sensor1.colorChecker();
 				res2 = sensor2.colorChecker();
-			
-				time++;
 			}
-			
 			mMoteur.mForward(400);
-			time = 1;
+			times = 1;
+			mline = 1;
+			mtimer.ok = 1;
 			
 			while((!Button.ESCAPE.isDown()) && (res1 == 1) && (res2 != 1)){
 				//turn left
-				Motor.A.setSpeed(400);
-				Motor.B.setSpeed(400 - 50*time);
+				if(mtimer.ok == 1)
+					mtimer.start();
+				if(mline == 1){
+					Motor.A.setSpeed(400);
+					Motor.B.setSpeed(400 - 100);
+				}/*else{
+					Motor.A.setSpeed(400);
+					Motor.B.setSpeed(400 - 100*times);
+					if(mwait.ok == 1)
+						mwait.start();
+					if(addTime == 1){
+						times++;
+						addTime = 0;
+						mwait.ok = 1;
+					}
+				}*/
 				res1 = sensor1.colorChecker();
 				res2 = sensor2.colorChecker();
-				time++;
 			}
-			
 			mMoteur.mForward(400);
-			time = 1;
+			times = 1;
+			mline = 1;
+			mtimer.ok = 1;
+			
 		}
 	
 	}	
+	
+	class Wait extends Thread{
+		private int msec;
+		public int ok = 1;
+		Wait(int sc){
+			msec = sc;
+		}
+		public void run(){
+			ok = 0;
+			try {
+	            Thread.sleep(msec);
+	        } catch (InterruptedException ie){
+	        	ie.printStackTrace();
+	        }
+			addTime = 1;
+		}
+	}
 	
 	
 }
