@@ -94,7 +94,7 @@ public class FollowLine {
 		int mTimerOK = 1, mWaitOK = 1;
 		
 		Wait mWait = new Wait(100);
-		Timer mTimer = new Timer(100);
+		Timer mTimer = new Timer(50);
 		
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(400);
