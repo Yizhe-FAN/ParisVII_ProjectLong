@@ -1,3 +1,9 @@
+*<2017-02-08>
+*** Fait:
+    - Un robot qui suive les lignes, mais avec quelque "glitch"
+*** À Faire:
+    - Ameliorer l'algo / changer la distance entre les capteurs
+
 * Ven 16 déc 2016 11:40:07 CET
 ** Fait:
    - Etalonnage semble ok sur le jalon
