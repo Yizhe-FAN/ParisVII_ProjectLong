@@ -2,13 +2,13 @@ package move;
 
 import lejos.nxt.*;
 
-public class Timer implements Runnable{
+public class Wait implements Runnable{
 	
 	private int msec;
 	private Thread runThread;
 	
-	Timer(int ms){
-		msec = ms;
+	Wait(int sc){
+		msec = sc;
 	}
 	
 	public void run(){
@@ -18,7 +18,8 @@ public class Timer implements Runnable{
         } catch (InterruptedException ie){
         	Thread.currentThread().interrupt();
         }
-		FollowLine.mline = 0;
+		FollowLine.addTime = 1;
+		stopRequest();
 	}
 	
 	public void stopRequest(){
@@ -26,6 +27,5 @@ public class Timer implements Runnable{
 			runThread.interrupt();
 		}
 	}
-	
 
 }
