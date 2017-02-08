@@ -34,7 +34,6 @@ public class FollowLine {
 				LCD.clear();
 				LCD.drawString("not Match", 0, 0);
 				break;
-		
 		}	
 			
 	}
