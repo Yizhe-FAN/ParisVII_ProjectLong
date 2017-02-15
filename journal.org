@@ -1,3 +1,9 @@
+*<2017-02-18>
+** Fait:
+   - suiveur des lignes, encore avec espace pour l'ameliorer
+** À Faire:
+   - Gerér mieuz quoi faire si le robot detecte le blanc
+
 *<2017-02-08>
 *** Fait:
     - Un robot qui suive les lignes, mais avec quelque "glitch"
