@@ -11,54 +11,55 @@ public class FollowLine {
 	static final int RIGHT = 1;
 	static int mline = 1;
 	static int addTime = 0;
+	private ControlColorSensor sensor1;
+	private ControlColorSensor sensor2;
 	
-	public void runFollowLineMode2(ControlColorSensor sensor1, ControlColorSensor sensor2){
+	public FollowLine(ControlColorSensor sensor1){
+		this.sensor1 = sensor1;
+	}
+	
+	public FollowLine(ControlColorSensor sensor1, ControlColorSensor sensor2){
+		this.sensor1 = sensor1;
+		this.sensor2 = sensor2;
+	}
+	
+	public void runFollowLineMode2(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
-		int res1, res2;
+		int[] res;
 		int speed = 300;
 		int turn = 0;
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(speed);
 		
 		while(!Button.ESCAPE.isDown()){
-			res1 = sensor1.colorChecker();
-			res2 = sensor2.colorChecker();
-			printColors(res1, res2);
+			res = sensorReadShow();
 			
-			while((!Button.ESCAPE.isDown()) && (res1 != WHITE) && (res2 == WHITE)){
+			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){
 				//turn right
 				turn++;
-				Motor.A.setSpeed(20);
-				Motor.B.setSpeed(20 + turn*turn);
-			
-				res1 = sensor1.colorChecker();
-				res2 = sensor2.colorChecker();
-				printColors(res1, res2);
+				mMoteur.right(turn);		
+				res = sensorReadShow();
+				speed = turn*turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
 			
-			while((!Button.ESCAPE.isDown()) && (res1 == WHITE) && (res2 != WHITE)){
+			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){
 				//turn left
 				turn++;
-				Motor.A.setSpeed(20 + turn*turn);
-				Motor.B.setSpeed(20);
-		
-				res1 = sensor1.colorChecker();
-				res2 = sensor2.colorChecker();
-				printColors(res1, res2);
+				mMoteur.left(turn);
+				res = sensorReadShow();
+				speed = turn*turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
 			
-			while((!Button.ESCAPE.isDown()) && (res1 != WHITE) && (res2 != WHITE)){
+			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] != WHITE)){
 				turn++;
-				Motor.A.setSpeed(20 + turn*turn);
-				Motor.B.setSpeed(20);
-				res1 = sensor1.colorChecker();
-				res2 = sensor2.colorChecker();
-				printColors(res1, res2);
+				mMoteur.left(turn);
+				res = sensorReadShow();
+				speed = turn*turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
@@ -70,6 +71,15 @@ public class FollowLine {
 	
 	}
 	
+	public int[] sensorReadShow(){
+		int[] res = new int[2];
+		res[0] = sensor1.colorChecker();
+		res[1] = sensor2.colorChecker();
+		printColors(res[0], res[1]);
+		return res;
+	}
+	
+	
 	public void printColors(int res1, int res2){
 		LCD.clear(3);
 		LCD.clear(4);
@@ -79,7 +89,7 @@ public class FollowLine {
 	}
 	
 	
-	public void runFollowLineMode1(ControlColorSensor controlColorSensor){
+	public void runFollowLineMode1(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
 		
@@ -89,7 +99,7 @@ public class FollowLine {
 		mMoteur.mForward(100);
 		
 		while(!Button.ESCAPE.isDown()){
-			res = controlColorSensor.colorChecker();
+			res = sensor1.colorChecker();
 			LCD.clear(3);
 			LCD.drawString("Color "+res+" Detected", 0, 3);
 			LCD.refresh();
@@ -105,7 +115,7 @@ public class FollowLine {
 					Motor.A.setSpeed(260);
 					Motor.B.setSpeed(60);
 				}
-				res = controlColorSensor.colorChecker();
+				res = sensor1.colorChecker();
 			}
 			
 			while((!Button.ESCAPE.isDown())&&(res != WHITE)){
@@ -117,7 +127,7 @@ public class FollowLine {
 					Motor.A.setSpeed(260);
 					Motor.B.setSpeed(60);
 				}
-				res = controlColorSensor.colorChecker();
+				res = sensor1.colorChecker();
 			}
 					
 			lastTime = Math.abs(lastTime-1);

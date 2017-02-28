@@ -22,16 +22,17 @@ public class MenuFollowLine {
 		FileHandler colorsFileHandler = new FileHandler(Settings.COLOR_FILE_NAME);
 		ControlColorSensor mControlColorSensor1 = new ControlColorSensor(1);
 		colorsFileHandler.readInList(mControlColorSensor1);
-		FollowLine mFollowLine = new FollowLine();
 		
 		switch (selectNumber){
 			case 0:
-				mFollowLine.runFollowLineMode1(mControlColorSensor1);
+				FollowLine mFollowLine = new FollowLine(mControlColorSensor1);
+				mFollowLine.runFollowLineMode1();
 				break;
 			case 1:
 				ControlColorSensor mControlColorSensor2 = new ControlColorSensor(2);
 				colorsFileHandler.readInList(mControlColorSensor2);
-				mFollowLine.runFollowLineMode2(mControlColorSensor1, mControlColorSensor2);
+				FollowLine mFollowLine2 = new FollowLine(mControlColorSensor1,mControlColorSensor2);
+				mFollowLine2.runFollowLineMode2();
 				break;
 			default: 
 				LCD.clear();

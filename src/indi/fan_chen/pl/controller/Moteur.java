@@ -26,12 +26,14 @@ public class Moteur {
 		return Motor.B.getSpeed();
 	}
 	
-	public void right(){
-		
+	public void right(int turn){
+		Motor.A.setSpeed(turn);
+		Motor.B.setSpeed(turn*turn);
 	}
 	
-	public void left(){
-		
+	public void left(int turn){
+		Motor.A.setSpeed(turn*turn);
+		Motor.B.setSpeed(turn);
 	}
 	
 
