@@ -26,5 +26,13 @@ public class Moteur {
 		return Motor.B.getSpeed();
 	}
 	
+	public void right(){
+		
+	}
+	
+	public void left(){
+		
+	}
+	
 
 }
