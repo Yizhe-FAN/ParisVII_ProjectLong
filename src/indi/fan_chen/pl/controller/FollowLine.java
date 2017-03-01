@@ -5,7 +5,7 @@ import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 
 public class FollowLine {
-	
+
 	static final int WHITE = 1;
 	static final int LEFT = 0;
 	static final int RIGHT = 1;
@@ -13,16 +13,16 @@ public class FollowLine {
 	static int addTime = 0;
 	private ControlColorSensor sensor1;
 	private ControlColorSensor sensor2;
-	
+
 	public FollowLine(ControlColorSensor sensor1){
 		this.sensor1 = sensor1;
 	}
-	
+
 	public FollowLine(ControlColorSensor sensor1, ControlColorSensor sensor2){
 		this.sensor1 = sensor1;
 		this.sensor2 = sensor2;
 	}
-	
+
 	public void runFollowLineMode2(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
@@ -31,20 +31,20 @@ public class FollowLine {
 		int turn = 0;
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(speed);
-		
+
 		while(!Button.ESCAPE.isDown()){
 			res = sensorReadShow();
-			
+
 			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){
 				//turn right
 				turn++;
-				mMoteur.right(turn);		
+				mMoteur.right(turn);
 				res = sensorReadShow();
 				speed = turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
-			
+
 			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){
 				//turn left
 				turn++;
@@ -54,7 +54,7 @@ public class FollowLine {
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
-			
+
 			/*while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] != WHITE)){
 				turn++;
 				mMoteur.left(turn);
@@ -63,14 +63,14 @@ public class FollowLine {
 			}
 			turn = 0;
 			mMoteur.mForward(speed);*/
-			
+
 			if(speed < 600){
 				speed += 50;
-			}	
+			}
 		}
-	
+
 	}
-	
+
 	public int[] sensorReadShow(){
 		int[] res = new int[2];
 		res[0] = sensor1.colorChecker();
@@ -78,8 +78,8 @@ public class FollowLine {
 		printColors(res[0], res[1]);
 		return res;
 	}
-	
-	
+
+
 	public void printColors(int res1, int res2){
 		LCD.clear(3);
 		LCD.clear(4);
@@ -87,23 +87,23 @@ public class FollowLine {
 		LCD.drawString("Sensor2 "+res2+" Detected", 0, 4);
 		LCD.refresh();
 	}
-	
-	
+
+
 	public void runFollowLineMode1(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
-		
+
 		int lastTime = LEFT;
 		Moteur mMoteur = new Moteur();
 		int res;
 		mMoteur.mForward(100);
-		
+
 		while(!Button.ESCAPE.isDown()){
 			res = sensor1.colorChecker();
 			LCD.clear(3);
 			LCD.drawString("Color "+res+" Detected", 0, 3);
 			LCD.refresh();
-			
+
 			while((!Button.ESCAPE.isDown())&&(res == WHITE)){
 				if(lastTime == LEFT){
 					//turn right
@@ -117,7 +117,7 @@ public class FollowLine {
 				}
 				res = sensor1.colorChecker();
 			}
-			
+
 			while((!Button.ESCAPE.isDown())&&(res != WHITE)){
 				if(lastTime == LEFT){
 					Motor.A.setSpeed(60);
@@ -129,26 +129,26 @@ public class FollowLine {
 				}
 				res = sensor1.colorChecker();
 			}
-					
+
 			lastTime = Math.abs(lastTime-1);
-			
-		}			
+
+		}
 	}
-	
+
 	/*public void runFollowLineMode3(ControlColorSensor sensor1, ControlColorSensor sensor2){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
 		int res1, res2, times = 1;
 		int mTimerOK = 1, mWaitOK = 1;
 		int speed = 400;
-		
-		
+
+
 		Wait mWait = new Wait(100);
 		Timer mTimer = new Timer(50);
-		
+
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(speed);
-		
+
 		while(!Button.ESCAPE.isDown()){
 			res1 = sensor1.colorChecker();
 			res2 = sensor2.colorChecker();
@@ -157,13 +157,13 @@ public class FollowLine {
 			LCD.drawString("Sensor1 "+res1+" Detected", 0, 3);
 			LCD.drawString("Sensor2 "+res2+" Detected", 0, 4);
 			LCD.refresh();
-			
+
 			while((!Button.ESCAPE.isDown()) && (res1 != 1) && (res2 == 1)){
 				//turn right
 				if(mTimerOK == 1){
 					new Thread(mTimer).start();
 					mTimerOK = 0;
-				}	
+				}
 				if(mline == 1){
 					Motor.A.setSpeed(speed - 100);
 					Motor.B.setSpeed(speed);
@@ -188,13 +188,13 @@ public class FollowLine {
 			mline = 1;
 			mTimerOK = 1;
 			mTimer.stopRequest();
-			
+
 			while((!Button.ESCAPE.isDown()) && (res1 == 1) && (res2 != 1)){
 				//turn left
 				if(mTimerOK == 1){
 					new Thread(mTimer).start();
 					mTimerOK = 0;
-				}	
+				}
 				if(mline == 1){
 					Motor.A.setSpeed(speed);
 					Motor.B.setSpeed(speed - 100);
@@ -214,18 +214,18 @@ public class FollowLine {
 				res1 = sensor1.colorChecker();
 				res2 = sensor2.colorChecker();
 			}
-					
+
 			mMoteur.mForward(speed);
 			times = 1;
 			mline = 1;
 			mTimerOK = 1;
 			mTimer.stopRequest();
-			
+
 			if(speed < 600){
 				speed+=50;
 			}
 		}
-	
+
 	}*/
-	
+
 }
