@@ -56,7 +56,7 @@ public class FollowLine {
 			mMoteur.mForward(speed);
 			
 			if(speed < 500){
-				speed += 100;
+				speed += 50;
 			}	
 
 		}
