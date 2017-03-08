@@ -4,6 +4,15 @@
 ** À faire:
    - améliorer les virages, détecter le fait qu'on tourne et ne pas avancer en ligne droite mais avec un différentiel sur les roues.
 *<2017-02-18>
+* <2017-03-01>
+** Fait:
+   - Plus de thread, on utilise une boucle
+** A faire:
+   - Changer la structure de l'algorithme pour ne plus avoir
+     un while dans un while mais seulement des ifs dans un
+     while.
+
+* <2017-02-18>
 ** Fait:
    - suiveur des lignes, encore avec espace pour l'ameliorer
 ** À Faire:

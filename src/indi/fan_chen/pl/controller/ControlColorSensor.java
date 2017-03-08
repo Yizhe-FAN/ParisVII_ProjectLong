@@ -1,6 +1,7 @@
-package move;
+package indi.fan_chen.pl.controller;
 
 import java.util.ArrayList;
+import indi.fan_chen.pl.model.ColorType;
 import lejos.nxt.*;
 import lejos.robotics.Color;
 
@@ -84,7 +85,7 @@ public class ControlColorSensor{
 		return indice + 1;
 	}
 	
-	public void testColorChecker(){
+	/*public void testColorChecker(){
 		LCD.clear();
 		LCD.drawString("---Check Color---", 0, 0);
 		int r,g,b;
@@ -118,7 +119,7 @@ public class ControlColorSensor{
 	        	ie.printStackTrace();
 	        }
 		}
-	}
+	}*/
 	
 	public void testColorCheckerOldVersion(){
 		LCD.clear();
@@ -229,34 +230,4 @@ public class ControlColorSensor{
 		}
 	}
 	
-}
-
-//element de table colorTypeList
-class ColorType{
-	public RgbState rgbMin;
-	public RgbState rgbMax;
-	public RgbState rgbAvg;
-	public ArrayList<ColorSensor.Color> rgbInfo;
-	
-	public ColorType(){
-		rgbInfo = new ArrayList<ColorSensor.Color>();
-		rgbMin = new RgbState(0);
-		rgbMax = new RgbState(0);
-		rgbAvg = new RgbState(0);
-	}
-	
-}
-
-
-//element de table
-class RgbState{
-	
-	public int r;
-	public int g;
-	public int b;
-	public RgbState(int v){
-		r = v;
-		g = v;
-		b = v;
-	}
 }

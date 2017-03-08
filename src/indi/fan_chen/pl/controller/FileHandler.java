@@ -1,16 +1,17 @@
-package move;
+package indi.fan_chen.pl.controller;
 
 import java.io.*;
 
+import indi.fan_chen.pl.model.ColorType;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class FileHandler {
 	
-	String fileName;
-	File file;
+	private String fileName;
+	private File file;
 	
-	FileHandler(String fileName){
+	public FileHandler(String fileName){
 		this.fileName = fileName;
 		file = new File(fileName);
 	}

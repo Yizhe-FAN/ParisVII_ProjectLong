@@ -1,4 +1,4 @@
-package move;
+package indi.fan_chen.pl.controller;
 
 import lejos.nxt.*;
 
