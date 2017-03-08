@@ -1,3 +1,8 @@
+* <2017-03-08>
+** Fait:
+   - suivi ok assez rapide
+** À faire:
+   - améliorer les virages, détecter le fait qu'on tourne et ne pas avancer en ligne droite mais avec un différentiel sur les roues.
 *<2017-02-18>
 ** Fait:
    - suiveur des lignes, encore avec espace pour l'ameliorer
