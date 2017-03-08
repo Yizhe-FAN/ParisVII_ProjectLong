@@ -37,35 +37,26 @@ public class FollowLine {
 			
 			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){
 				//turn right
+				speed = 300;
 				turn++;
 				mMoteur.right(turn);		
 				res = sensorReadShow();
-				speed = turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
 			
 			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){
 				//turn left
+				speed = 300;
 				turn++;
 				mMoteur.left(turn);
 				res = sensorReadShow();
-				speed = turn;
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
 			
-			/*while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] != WHITE)){
-				turn++;
-				mMoteur.left(turn);
-				res = sensorReadShow();
-				speed = turn*turn;
-			}
-			turn = 0;
-			mMoteur.mForward(speed);*/
-			
-			if(speed < 600){
-				speed += 50;
+			if(speed < 500){
+				speed += 100;
 			}	
 		}
 	
