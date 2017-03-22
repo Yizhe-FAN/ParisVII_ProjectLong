@@ -59,11 +59,11 @@ public class FollowLine {
 			
 			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] == WHITE)){//find line
 				if(directionFlag == 0){
-					Motor.A.setSpeed(60);
-					Motor.B.setSpeed(260);
+					Motor.A.setSpeed(50);
+					Motor.B.setSpeed(350);
 				}else if(directionFlag == 1){
-					Motor.A.setSpeed(260);
-					Motor.B.setSpeed(60);
+					Motor.A.setSpeed(350);
+					Motor.B.setSpeed(50);
 				}
 				res = sensorReadShow();
 			}
