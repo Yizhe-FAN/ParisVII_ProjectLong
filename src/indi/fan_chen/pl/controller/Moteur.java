@@ -30,15 +30,11 @@ public class Moteur {
 		
 		int speedInit = Motor.A.getSpeed();
 		
-		if(turn <= 2 ){
-			Motor.A.setSpeed(speedInit - 100);
+		if(turn <= 50 ){
+			Motor.A.setSpeed(speedInit - turn);
 		}
 		else{
-			if(speedInit >= 100){
-				if(turn%100 == 0)
-				Motor.A.setSpeed(speedInit - 100);
-			}
-			else Motor.A.setSpeed(0);
+			Motor.A.setSpeed(speedInit- turn*turn);
 		}
 		
 		speedInit = Motor.B.getSpeed();
@@ -51,15 +47,11 @@ public class Moteur {
 		
 		speedInit = Motor.B.getSpeed();
 		
-		if(turn <= 2){
-			Motor.B.setSpeed(speedInit - 100);
+		if(turn <= 50){
+			Motor.B.setSpeed(speedInit - turn);
 		}
 		else{
-			if(speedInit >= 100){
-				if(turn%100 == 0)
-				Motor.B.setSpeed(speedInit - 100);
-			}
-			else Motor.B.setSpeed(0);
+			Motor.B.setSpeed(speedInit - turn*turn);
 		}
 		
 	}
