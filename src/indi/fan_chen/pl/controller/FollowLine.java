@@ -32,11 +32,13 @@ public class FollowLine {
 		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(speed);
 
+		int directionFlag = -1;
+		
 		while(!Button.ESCAPE.isDown()){
 			res = sensorReadShow();
 
-			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){
-				//turn right
+			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){//turn right
+				directionFlag = 1;
 				speed = 300;
 				turn++;
 				mMoteur.right(turn);
@@ -45,8 +47,8 @@ public class FollowLine {
 			turn = 0;
 			mMoteur.mForward(speed);
 
-			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){
-				//turn left
+			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){//turn left
+				directionFlag = 0;
 				speed = 300;
 				turn++;
 				mMoteur.left(turn);
@@ -54,6 +56,17 @@ public class FollowLine {
 			}
 			turn = 0;
 			mMoteur.mForward(speed);
+			
+			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] == WHITE)){//find line
+				if(directionFlag == 0){
+					Motor.A.setSpeed(60);
+					Motor.B.setSpeed(260);
+				}else if(directionFlag == 1){
+					Motor.A.setSpeed(260);
+					Motor.B.setSpeed(60);
+				}
+				res = sensorReadShow();
+			}
 			
 			if(speed < 500){
 				speed += 50;
