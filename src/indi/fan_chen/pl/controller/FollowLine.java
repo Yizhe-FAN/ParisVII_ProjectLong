@@ -3,6 +3,7 @@ package indi.fan_chen.pl.controller;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
+import lejos.nxt.Sound;
 
 public class FollowLine {
 
@@ -21,6 +22,13 @@ public class FollowLine {
 	public FollowLine(ControlColorSensor sensor1, ControlColorSensor sensor2){
 		this.sensor1 = sensor1;
 		this.sensor2 = sensor2;
+	}
+	
+	public void runFollowLineMode1(){
+		LCD.clear();
+		LCD.drawString("---Follow Line---", 0, 0);
+		Sound.twoBeeps();
+		init();
 	}
 
 	public void runFollowLineMode2(){
@@ -94,8 +102,13 @@ public class FollowLine {
 		LCD.drawString("Sensor2 "+res2+" Detected", 0, 4);
 		LCD.refresh();
 	}
+	
+	private void init(){
+		Thread curiser = new Thread(new Cruiser(sensor1));
+		curiser.start();
+	}
 
-
+	/*
 	public void runFollowLineMode1(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
@@ -140,7 +153,7 @@ public class FollowLine {
 			lastTime = Math.abs(lastTime-1);
 
 		}
-	}
+	}*/
 
 	/*public void runFollowLineMode3(ControlColorSensor sensor1, ControlColorSensor sensor2){
 		LCD.clear();
