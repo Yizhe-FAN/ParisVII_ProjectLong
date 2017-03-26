@@ -1,5 +1,8 @@
 package indi.fan_chen.pl.controller;
 
+import indi.fan_chen.pl.model.ColorType;
+import indi.fan_chen.pl.model.RgbState;
+import indi.fan_chen.pl.model.Settings;
 import lejos.nxt.*;
 
 public class Cruiser extends Thread{
@@ -17,11 +20,11 @@ public class Cruiser extends Thread{
 	int lastError = 0;
 	double correction = 0;
 	
-	double aPower;
-	double bPower;
+	double leftPower;
+	double rightPower;
 	
-	int color1 = 0;
-	int color2 = 0;
+	RgbState background;
+	RgbState line;
 	
 	NXTMotor ma = new NXTMotor(MotorPort.A);
 	NXTMotor mb = new NXTMotor(MotorPort.B);
@@ -31,6 +34,7 @@ public class Cruiser extends Thread{
 	}
 	
 	public void run(){
+		/*
 		while(!Button.ESCAPE.isDown()){
 			value = getValue();
 			error = value - median;
@@ -50,8 +54,8 @@ public class Cruiser extends Thread{
 				correction = -50;
 			}
 			
-			aPower = 50 - correction;
-			bPower = 50 + correction;
+			leftPower = 50 - correction;
+			rightPower = 50 + correction;
 			
 			if(error< -45){
 				ma.setPower(40);
@@ -59,30 +63,20 @@ public class Cruiser extends Thread{
 				mb.setPower(40);
 				mb.forward();
 			}else{
-				ma.setPower(new Double(aPower).intValue());
+				ma.setPower(new Double(leftPower).intValue());
 				ma.forward();
-				mb.setPower(new Double(bPower).intValue());
+				mb.setPower(new Double(rightPower).intValue());
 				mb.forward();
 			}
 			
 					
 			lastError = error;
-		}
+		}*/
 	}
 	
+	
 	private int getValue(){
-		int res;
-		color1 = 0;
-		color2 = 0;
-		for(int i = 0; i < 10; ++i){
-			res = sensor1.colorChecker();
-			if(res == 1){
-				color1++;
-			}else if(res == 2){
-				color2++;
-			}
-		}
-		return (color1/(color1+color2))*10;//return color of background
+		return 0;
 	}
 
 }
