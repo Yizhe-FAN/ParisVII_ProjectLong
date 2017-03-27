@@ -12,7 +12,6 @@ public class Cruiser extends Thread{
 	double kp = 1.2;
 	double ki = 0.0008;
 	double kd = 5;
-	int median = 5;
 	int value = 0;
 	int error = 0;
 	int integral = 0;
@@ -25,17 +24,24 @@ public class Cruiser extends Thread{
 	
 	RgbState background;
 	RgbState line;
+	RgbState median;
 	
 	NXTMotor ma = new NXTMotor(MotorPort.A);
 	NXTMotor mb = new NXTMotor(MotorPort.B);
 
 	public Cruiser(ControlColorSensor sensor){
 		sensor1 = sensor;
+		background = new RgbState(0);
+		line = new RgbState(0);
+		median = new RgbState(0);
+		getRgbAvg(0, background);
+		getRgbAvg(1, line);
+		
 	}
 	
 	public void run(){
-		/*
 		while(!Button.ESCAPE.isDown()){
+			/*
 			value = getValue();
 			error = value - median;
 			integral += error;
@@ -70,10 +76,24 @@ public class Cruiser extends Thread{
 			}
 			
 					
-			lastError = error;
-		}*/
+			lastError = error;*/
+		}
 	}
 	
+	private void getRgbAvg(int index, RgbState state){
+		ColorType tempCT = sensor1.colorTypeList.get(index);
+		state.r = tempCT.rgbAvg.r;
+		state.g = tempCT.rgbAvg.g;
+		state.b = tempCT.rgbAvg.b;
+	}
+	
+	private void getRgbMedian(RgbState back, RgbState line, RgbState mid){
+		
+	}
+	
+	private int getError(RgbState mid, int r, int g, int b){
+		return 0;
+	}
 	
 	private int getValue(){
 		return 0;
