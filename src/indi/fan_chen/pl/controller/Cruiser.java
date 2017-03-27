@@ -8,11 +8,12 @@ import lejos.nxt.*;
 public class Cruiser extends Thread{
 	
 	private ControlColorSensor sensor1;
+	private ColorSensor colorSensor;
+	int rInter,gInter,bInter;
 	
 	double kp = 1.2;
 	double ki = 0.0008;
 	double kd = 5;
-	int value = 0;
 	int error = 0;
 	int integral = 0;
 	int derivative = 0;
@@ -31,19 +32,19 @@ public class Cruiser extends Thread{
 
 	public Cruiser(ControlColorSensor sensor){
 		sensor1 = sensor;
+		colorSensor = new ColorSensor(SensorPort.getInstance(0));
 		background = new RgbState(0);
 		line = new RgbState(0);
 		median = new RgbState(0);
 		getRgbAvg(0, background);
 		getRgbAvg(1, line);
-		
+		getRgbMedian(background, line, median);
 	}
 	
 	public void run(){
 		while(!Button.ESCAPE.isDown()){
-			/*
-			value = getValue();
-			error = value - median;
+			ColorSensor.Color vals = colorSensor.getColor();
+			error = getError(median, vals.getRed(), vals.getGreen(), vals.getBlue());
 			integral += error;
 			derivative = error - lastError;
 			
@@ -74,9 +75,8 @@ public class Cruiser extends Thread{
 				mb.setPower(new Double(rightPower).intValue());
 				mb.forward();
 			}
-			
-					
-			lastError = error;*/
+						
+			lastError = error;
 		}
 	}
 	
@@ -87,16 +87,21 @@ public class Cruiser extends Thread{
 		state.b = tempCT.rgbAvg.b;
 	}
 	
-	private void getRgbMedian(RgbState back, RgbState line, RgbState mid){
-		
+	void getRgbMedian(RgbState back, RgbState line, RgbState mid){
+		rInter = back.r-line.r;
+		gInter = back.g-line.g;
+		bInter = back.b-line.b;
+		mid.r = line.r + rInter/2;
+		mid.g = line.g + gInter/2;
+		mid.b = line.b + bInter/2;
 	}
 	
 	private int getError(RgbState mid, int r, int g, int b){
-		return 0;
-	}
-	
-	private int getValue(){
-		return 0;
+		int rDis,gDis,bDis;
+		rDis = ((r - mid.r)/rInter)*100;
+		gDis = ((g - mid.g)/gInter)*100;
+		bDis = ((b - mid.b)/bInter)*100;
+		return (rDis+gDis+bDis)/3;
 	}
 
 }
