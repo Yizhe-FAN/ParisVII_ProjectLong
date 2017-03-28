@@ -4,9 +4,7 @@ import indi.fan_chen.pl.controller.ControlColorSensor;
 import indi.fan_chen.pl.controller.FileHandler;
 import indi.fan_chen.pl.model.Settings;
 import lejos.nxt.Button;
-import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
 import lejos.util.TextMenu;
 
 public class MenuColorChecker {

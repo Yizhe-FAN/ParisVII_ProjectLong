@@ -1,6 +1,6 @@
 package indi.fan_chen.pl.controller;
 
-import lejos.nxt.*;
+
 
 public class Wait implements Runnable{
 	

@@ -2,7 +2,6 @@ package indi.fan_chen.pl.controller;
 
 import indi.fan_chen.pl.model.ColorType;
 import indi.fan_chen.pl.model.RgbState;
-import indi.fan_chen.pl.model.Settings;
 import lejos.nxt.*;
 
 public class Cruiser extends Thread{
@@ -14,18 +13,15 @@ public class Cruiser extends Thread{
 	double kp;
 	double ki = -30;
 	//double kd = 5;
-	//int error = 0;
-	//int integral = 0;
-	int derivative = 0;
-	int lastError = 0;
-	double correction = 0;
+	//int derivative = 0;
+	//int lastError = 0;
+	//double correction = 0;
 	
-	double leftPower;
-	double rightPower;
+	//double leftPower;
+	//double rightPower;
 	
 	RgbState background;
 	RgbState line;
-	//RgbState median;
 	
 	NXTMotor ma = new NXTMotor(MotorPort.A);
 	NXTMotor mb = new NXTMotor(MotorPort.B);
@@ -41,7 +37,7 @@ public class Cruiser extends Thread{
 		colorSensor = new ColorSensor(SensorPort.getInstance(0));
 		background = new RgbState(0);
 		line = new RgbState(0);
-		//median = new RgbState(0);
+
 		getRgbAvg(0, background);
 		getRgbAvg(1, line);
 		
@@ -49,8 +45,6 @@ public class Cruiser extends Thread{
 		offSet = (corBase + 1) / 2;
 		
 		kp = 1 / (corBase - offSet);
-		
-		//getRgbMedian(background, line, median);
 	}
 	
 	public void run(){
@@ -150,23 +144,6 @@ public class Cruiser extends Thread{
 		state.r = tempCT.rgbAvg.r;
 		state.g = tempCT.rgbAvg.g;
 		state.b = tempCT.rgbAvg.b;
-	}
-	
-	void getRgbMedian(RgbState back, RgbState line, RgbState mid){
-		rInter = back.r-line.r;
-		gInter = back.g-line.g;
-		bInter = back.b-line.b;
-		mid.r = line.r + rInter/2;
-		mid.g = line.g + gInter/2;
-		mid.b = line.b + bInter/2;
-	}
-	
-	private int getError(RgbState mid, int r, int g, int b){
-		int rDis,gDis,bDis;
-		rDis = ((r - mid.r)/rInter)*100;
-		gDis = ((g - mid.g)/gInter)*100;
-		bDis = ((b - mid.b)/bInter)*100;
-		return (rDis+gDis+bDis)/3;
 	}
 
 }

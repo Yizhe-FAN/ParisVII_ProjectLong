@@ -2,14 +2,13 @@ package indi.fan_chen.pl.controller;
 
 import java.util.ArrayList;
 import indi.fan_chen.pl.model.ColorType;
-import indi.fan_chen.pl.model.RgbState;
 import lejos.nxt.*;
 import lejos.robotics.Color;
 
 public class ControlColorSensor{
 	
 	public ArrayList<ColorType> colorTypeList;
-	private ColorSensor colorSensor;
+	public ColorSensor colorSensor;
 
 	
 	public ControlColorSensor(int port){

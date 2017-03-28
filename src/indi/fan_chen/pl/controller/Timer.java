@@ -1,6 +1,5 @@
 package indi.fan_chen.pl.controller;
 
-import lejos.nxt.*;
 
 public class Timer implements Runnable{
 	

@@ -8,11 +8,9 @@ import lejos.nxt.LCD;
 
 public class FileHandler {
 	
-	private String fileName;
 	private File file;
 	
 	public FileHandler(String fileName){
-		this.fileName = fileName;
 		file = new File(fileName);
 	}
 	

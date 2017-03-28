@@ -1,20 +1,25 @@
 package indi.fan_chen.pl.controller;
 
+import indi.fan_chen.pl.model.ColorType;
+import indi.fan_chen.pl.model.RgbState;
 import lejos.nxt.Button;
+import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.Motor;
-import lejos.nxt.Sound;
+
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
 
 public class FollowLine {
 
 	static final int WHITE = 1;
+	static final int BLACK = 3;
 	static final int LEFT = 0;
 	static final int RIGHT = 1;
 	static int mline = 1;
 	static int addTime = 0;
 	private ControlColorSensor sensor1;
 	private ControlColorSensor sensor2;
-
+	
 	public FollowLine(ControlColorSensor sensor1){
 		this.sensor1 = sensor1;
 	}
@@ -27,9 +32,103 @@ public class FollowLine {
 	public void runFollowLineMode1(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
-		Sound.twoBeeps();
-		init();
+		
+		RgbState background = getRgbState(0);
+		RgbState line = getRgbState(1);
+		
+		NXTMotor ma = new NXTMotor(MotorPort.A);
+		NXTMotor mb = new NXTMotor(MotorPort.B);
+		
+		double error = 0;
+		double integral = 0;
+		double powerStandard = 60;
+		double powerVal = 20;
+		
+		double corBase = calculCor(background.r, background.g, background.b, line);
+		double offSet = (corBase + 1) / 2;
+		
+		double kp = 1 / (corBase - offSet);
+		double ki = -40;
+		//double kd = -80;
+		int res = -1;
+		
+		while(!Button.ESCAPE.isDown()){
+			ColorSensor.Color vals = sensor1.colorSensor.getColor();
+			res = sensor1.colorChecker();
+			
+			if(res == BLACK) {
+				ma.stop();
+				mb.stop();
+				break;
+			}
+			
+			double newCor = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line);
+			
+			double newError = newCor - offSet;
+			
+			//double derivative = newError - error;
+			
+			if ( (newError * error) < 0 ){
+				integral = 0;
+			}
+			error = newError;
+			
+			integral += error;
+			
+			double turn = powerVal * kp * error + ki * integral;
+			
+			double powerA = powerStandard - turn;
+			double powerB = powerStandard + turn;
+			
+			if(powerA > 0){
+				ma.setPower(new Double(powerA).intValue());
+				ma.forward();
+			}
+			else {
+				powerA = powerA*(-1);
+				ma.stop();
+				ma.backward();
+				ma.setPower(new Double(powerA).intValue());
+				
+			}
+			
+			if(powerB > 0){
+				mb.setPower(new Double(powerB).intValue());
+				mb.forward();
+			}
+			else {
+				powerB = powerB*(-1);
+				mb.stop();
+				mb.backward();
+				mb.setPower(new Double(powerB).intValue());
+				
+			}
+		}
+		
 	}
+	
+	private RgbState getRgbState(int index){
+		
+		ColorType tempCT = sensor1.colorTypeList.get(index);
+		RgbState rgbState = new RgbState(tempCT.rgbAvg.r, tempCT.rgbAvg.g, tempCT.rgbAvg.b);
+		
+		return rgbState;
+	}
+	
+	private double calculCor(int r, int g, int b, RgbState base){
+		double newColor = Math.sqrt(r*r + g*g + b*b);
+		double baseColor = Math.sqrt(base.r*base.r + base.g*base.g + base.b*base.b);
+		
+		double colorMix = r * base.r + g * base.g + b * base.b;  
+	    double cor = colorMix / (newColor * baseColor);
+		return cor;
+	}
+	
+	/*public void runFollowLineMode1(){
+		LCD.clear();
+		LCD.drawString("---Follow Line---", 0, 0);
+		init();
+	}*/
 
 	public void runFollowLineMode2(){
 		LCD.clear();
@@ -103,10 +202,10 @@ public class FollowLine {
 		LCD.refresh();
 	}
 	
-	private void init(){
+	/*private void init(){
 		Thread curiser = new Thread(new Cruiser(sensor1));
 		curiser.start();
-	}
+	}*/
 
 	/*
 	public void runFollowLineMode1(){

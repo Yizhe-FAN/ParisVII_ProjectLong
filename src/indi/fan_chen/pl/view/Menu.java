@@ -2,7 +2,6 @@ package indi.fan_chen.pl.view;
 
 import indi.fan_chen.pl.controller.ControlColorSensor;
 import indi.fan_chen.pl.controller.FileHandler;
-import indi.fan_chen.pl.controller.FollowLine;
 import indi.fan_chen.pl.model.Settings;
 import lejos.nxt.LCD;
 import lejos.util.TextMenu;
