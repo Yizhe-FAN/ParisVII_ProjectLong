@@ -47,7 +47,7 @@ public class FollowLine {
 
 			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){//turn right
 				directionFlag = 1;
-				speed = 400;
+				speed = 300;
 				turn++;
 				mMoteur.right(turn);
 				res = sensorReadShow();
@@ -57,7 +57,7 @@ public class FollowLine {
 
 			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){//turn left
 				directionFlag = 0;
-				speed = 400;
+				speed = 300;
 				turn++;
 				mMoteur.left(turn);
 				res = sensorReadShow();

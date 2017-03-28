@@ -11,11 +11,11 @@ public class Cruiser extends Thread{
 	private ColorSensor colorSensor;
 	int rInter,gInter,bInter;
 	
-	double kp = 1.2;
-	double ki = 0.0008;
-	double kd = 5;
-	int error = 0;
-	int integral = 0;
+	double kp;
+	double ki = -30;
+	//double kd = 5;
+	//int error = 0;
+	//int integral = 0;
 	int derivative = 0;
 	int lastError = 0;
 	double correction = 0;
@@ -30,9 +30,11 @@ public class Cruiser extends Thread{
 	NXTMotor ma = new NXTMotor(MotorPort.A);
 	NXTMotor mb = new NXTMotor(MotorPort.B);
 	
+	double error = 0;
 	double offSet;
-	double powerStandard = 50;
+	double powerStandard = 60;
 	double powerVal = 50;
+	double integral = 0;
 
 	public Cruiser(ControlColorSensor sensor){
 		sensor1 = sensor;
@@ -43,10 +45,10 @@ public class Cruiser extends Thread{
 		getRgbAvg(0, background);
 		getRgbAvg(1, line);
 		
-		double cor = calculCor(background.r, background.g, background.b, line);
-		offSet = (cor + 1) / 2;
+		double corBase = calculCor(background.r, background.g, background.b, line);
+		offSet = (corBase + 1) / 2;
 		
-		kp = 1 / (cor - offSet);
+		kp = 1 / (corBase - offSet);
 		
 		//getRgbMedian(background, line, median);
 	}
@@ -56,9 +58,17 @@ public class Cruiser extends Thread{
 			ColorSensor.Color vals = colorSensor.getColor();
 			
 			double newCor = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line);
-			double error = newCor - offSet ;
 			
-			double turn = powerVal * kp * error;
+			double newError = newCor - offSet;
+			
+			if ( (newError * error) < 0 ){
+				integral = 0;
+			}
+			error = newError;
+			
+			integral += error;
+			
+			double turn = powerVal * kp * error + ki * integral;
 			
 			double powerA = powerStandard - turn;
 			double powerB = powerStandard + turn;
@@ -69,8 +79,10 @@ public class Cruiser extends Thread{
 			}
 			else {
 				powerA = powerA*(-1);
-				ma.setPower(new Double(powerA).intValue());
+				ma.stop();
 				ma.backward();
+				ma.setPower(new Double(powerA).intValue());
+				
 			}
 			
 			if(powerB > 0){
@@ -79,8 +91,10 @@ public class Cruiser extends Thread{
 			}
 			else {
 				powerB = powerB*(-1);
-				mb.setPower(new Double(powerB).intValue());
+				mb.stop();
 				mb.backward();
+				mb.setPower(new Double(powerB).intValue());
+				
 			}
 			
 			//error = getError(median, vals.getRed(), vals.getGreen(), vals.getBlue());
