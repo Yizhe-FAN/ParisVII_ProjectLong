@@ -25,37 +25,78 @@ public class Cruiser extends Thread{
 	
 	RgbState background;
 	RgbState line;
-	RgbState median;
+	//RgbState median;
 	
 	NXTMotor ma = new NXTMotor(MotorPort.A);
 	NXTMotor mb = new NXTMotor(MotorPort.B);
+	
+	double offSet;
+	double powerStandard = 50;
+	double powerVal = 50;
 
 	public Cruiser(ControlColorSensor sensor){
 		sensor1 = sensor;
 		colorSensor = new ColorSensor(SensorPort.getInstance(0));
 		background = new RgbState(0);
 		line = new RgbState(0);
-		median = new RgbState(0);
+		//median = new RgbState(0);
 		getRgbAvg(0, background);
 		getRgbAvg(1, line);
-		getRgbMedian(background, line, median);
+		
+		double cor = calculCor(background.r, background.g, background.b, line);
+		offSet = (cor + 1) / 2;
+		
+		kp = 1 / (cor - offSet);
+		
+		//getRgbMedian(background, line, median);
 	}
 	
 	public void run(){
 		while(!Button.ESCAPE.isDown()){
 			ColorSensor.Color vals = colorSensor.getColor();
-			error = getError(median, vals.getRed(), vals.getGreen(), vals.getBlue());
-			integral += error;
-			derivative = error - lastError;
 			
-			correction = kp*error + ki*integral + kd*derivative;
+			double newCor = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line);
+			double error = newCor - offSet ;
 			
-			LCD.clear(2);
-			LCD.drawString("Error " + correction, 0, 2);
-			LCD.clear(3);
-			LCD.drawString("Correction " + correction, 0, 3);
+			double turn = powerVal * kp * error;
 			
-			if(correction > 50){
+			double powerA = powerStandard - turn;
+			double powerB = powerStandard + turn;
+			
+			if(powerA > 0){
+				ma.setPower(new Double(powerA).intValue());
+				ma.forward();
+			}
+			else {
+				powerA = powerA*(-1);
+				ma.setPower(new Double(powerA).intValue());
+				ma.backward();
+			}
+			
+			if(powerB > 0){
+				mb.setPower(new Double(powerB).intValue());
+				mb.forward();
+			}
+			else {
+				powerB = powerB*(-1);
+				mb.setPower(new Double(powerB).intValue());
+				mb.backward();
+			}
+			
+			//error = getError(median, vals.getRed(), vals.getGreen(), vals.getBlue());
+			//LCD.clear(4);
+			//LCD.drawString("R"+vals.getRed()+"G"+vals.getGreen()+"B"+vals.getBlue(), 0, 4);
+			//integral += error;
+			//derivative = error - lastError;
+			
+			//correction = kp*error + ki*integral + kd*derivative;
+			
+			//LCD.clear(2);
+			//LCD.drawString("Error " + error, 0, 2);
+			//LCD.clear(3);
+			//LCD.drawString("Correction " + correction, 0, 3);
+			
+			/*if(correction > 50){
 				correction = 50;
 			}else if(correction < -50){
 				correction = -50;
@@ -74,11 +115,21 @@ public class Cruiser extends Thread{
 				ma.forward();
 				mb.setPower(new Double(rightPower).intValue());
 				mb.forward();
-			}
+			}*/
 						
-			lastError = error;
+			//lastError = error;
 		}
 	}
+	
+	private double calculCor(int r, int g, int b, RgbState base){
+		double newColor = Math.sqrt(r*r + g*g + b*b);
+		double baseColor = Math.sqrt(base.r*base.r + base.g*base.g + base.b*base.b);
+		
+		double colorMix = r * base.r + g * base.g + b * base.b;  
+	    double cor = colorMix / (newColor * baseColor);
+		return cor;
+	}
+	
 	
 	private void getRgbAvg(int index, RgbState state){
 		ColorType tempCT = sensor1.colorTypeList.get(index);
