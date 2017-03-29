@@ -41,15 +41,16 @@ public class FollowLine {
 		
 		double error = 0;
 		double integral = 0;
-		double powerStandard = 60;
-		double powerVal = 20;
+		double powerStandard = 85;
+		double powerVal = 35;
 		
 		double corBase = calculCor(background.r, background.g, background.b, line);
 		double offSet = (corBase + 1) / 2;
 		
 		double kp = 1 / (corBase - offSet);
-		double ki = -40;
-		//double kd = -80;
+		double ki = -45;
+		double kd = -85;
+		
 		int res = -1;
 		
 		while(!Button.ESCAPE.isDown()){
@@ -66,7 +67,7 @@ public class FollowLine {
 			
 			double newError = newCor - offSet;
 			
-			//double derivative = newError - error;
+			double derivative = newError - error;
 			
 			if ( (newError * error) < 0 ){
 				integral = 0;
@@ -75,7 +76,7 @@ public class FollowLine {
 			
 			integral += error;
 			
-			double turn = powerVal * kp * error + ki * integral;
+			double turn = powerVal * kp * error + ki * integral + kd * derivative;
 			
 			double powerA = powerStandard - turn;
 			double powerB = powerStandard + turn;
