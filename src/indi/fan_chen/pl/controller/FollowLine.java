@@ -41,15 +41,15 @@ public class FollowLine {
 		
 		double error = 0;
 		double integral = 0;
-		double powerStandard = 85;
-		double powerVal = 35;
+		double powerStandard = 70;
+		double powerVal = 19;
 		
 		double corBase = calculCor(background.r, background.g, background.b, line);
 		double offSet = (corBase + 1) / 2;
 		
 		double kp = 1 / (corBase - offSet);
-		double ki = -45;
-		double kd = -85;
+		double ki = -23;
+		double kd = -105;
 		
 		int res = -1;
 		
