@@ -1,7 +1,10 @@
 package indi.fan_chen.pl.controller;
 
+import java.util.ArrayList;
+
 import indi.fan_chen.pl.model.ColorType;
 import indi.fan_chen.pl.model.RgbState;
+import indi.fan_chen.pl.model.Settings;
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
@@ -53,19 +56,35 @@ public class FollowLine {
 		
 		int res = -1;
 		
+        /* optimisation */
+		int round = 0;
+		ArrayList<Double> errorList = new ArrayList<Double>();
+		double[] paras = new double[4];
+		paras[0] = powerStandard;
+		paras[1] = powerVal;
+		paras[2] = ki;
+		paras[3] = kd;
+		
 		while(!Button.ESCAPE.isDown()){
 			ColorSensor.Color vals = sensor1.colorSensor.getColor();
 			res = sensor1.colorChecker();
 			
 			if(res == STOP) {
-				ma.stop();
-				mb.stop();
-				break;
+				round++;
+				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
+				mFileHandler.append(errorList,paras);
+				if(round == 2){
+					ma.stop();
+					mb.stop();					
+					break;
+				}	
+				setSamePower(ma, mb);	
 			}
 			
 			double newCor = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line);
 			
 			double newError = newCor - offSet;
+			errorList.add(newCor);
 			
 			double derivative = newError - error;
 			
@@ -110,6 +129,13 @@ public class FollowLine {
 			}*/
 		}
 		
+	}
+	
+	private void setSamePower(NXTMotor ma, NXTMotor mb){
+		ma.setPower(30);
+		mb.setPower(30);	
+		ma.forward();
+		mb.forward();
 	}
 	
 	private void changePower(double power, NXTMotor mm){

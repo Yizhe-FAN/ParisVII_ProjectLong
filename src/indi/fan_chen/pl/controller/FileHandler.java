@@ -1,6 +1,7 @@
 package indi.fan_chen.pl.controller;
 
 import java.io.*;
+import java.util.ArrayList;
 
 import indi.fan_chen.pl.model.ColorType;
 import lejos.nxt.Button;
@@ -17,6 +18,38 @@ public class FileHandler {
 	
 	public void deleteFile(){
 		file.delete();
+	}
+	
+	public void append(ArrayList<Double> arrayList,double[] paras){
+		try {
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
+			BufferedWriter bw = new BufferedWriter(r);
+			int size =  arrayList.size();
+			String content = "";
+			
+			content += paras[0]+","+paras[1]+","+paras[2]+","+paras[3]+",";
+			
+			for(int i = 0; i <= size; i++){
+				if(i == 0 ){
+					content += arrayList.get(0);
+				}else if (i < size) {
+					content += ","+arrayList.get(i);
+				}else{
+					content += "\n";
+				}
+			}
+			bw.append(content);
+			bw.close();			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		
 	}
 	
 	public void writeInFile(ControlColorSensor controlColorSensor){
