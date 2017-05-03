@@ -81,7 +81,11 @@ public class FollowLine {
 			double powerA = powerStandard - turn;
 			double powerB = powerStandard + turn;
 			
-			if(powerA > 0){
+			
+			changePower(powerA, ma);
+			changePower(powerB, mb);
+			
+			/*if(powerA > 0){
 				ma.setPower(new Double(powerA).intValue());
 				ma.forward();
 			}
@@ -103,9 +107,24 @@ public class FollowLine {
 				mb.backward();
 				mb.setPower(new Double(powerB).intValue());
 				
-			}
+			}*/
 		}
 		
+	}
+	
+	private void changePower(double power, NXTMotor mm){
+		
+		if(power > 0){
+			mm.setPower(new Double(power).intValue());
+			mm.forward();
+		}
+		else {
+			power = power*(-1);
+			mm.stop();
+			mm.backward();
+			mm.setPower(new Double(power).intValue());
+			
+		}
 	}
 	
 	private RgbState getRgbState(int index){
