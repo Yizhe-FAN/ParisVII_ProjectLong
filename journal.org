@@ -1,3 +1,8 @@
+* <2017-05-03>
+** Fait:
+   - Stocker les erreurs
+** Faire:
+   - Dessiner les graphiques en fonction de l'erreur en fonction des paramètres.
 * <2017-04-19>
 ** Fait:
    - PID qui fonctionne pas mal du tout mais qui ne va pas tout droit en ligne droite!
