@@ -25,18 +25,17 @@ public class FileHandler {
 			if(!file.exists()){
 				file.createNewFile();
 			}
-			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file));
+			OutputStreamWriter r = new OutputStreamWriter(new FileOutputStream(file,true));
 			BufferedWriter bw = new BufferedWriter(r);
+			
 			int size =  arrayList.size();
 			String content = "";
 			
-			content += paras[0]+","+paras[1]+","+paras[2]+","+paras[3]+",";
+			content += paras[0]+"/"+paras[1]+"/"+paras[2]+"/"+paras[3]+",";
 			
 			for(int i = 0; i <= size; i++){
-				if(i == 0 ){
-					content += arrayList.get(0);
-				}else if (i < size) {
-					content += ","+arrayList.get(i);
+				if (i < size) {
+					content += arrayList.get(i)+",";
 				}else{
 					content += "\n";
 				}
@@ -44,7 +43,7 @@ public class FileHandler {
 			bw.append(content);
 			bw.close();			
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}

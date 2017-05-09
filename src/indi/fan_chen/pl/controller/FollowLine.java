@@ -38,53 +38,54 @@ public class FollowLine {
 		
 		RgbState background = getRgbState(0);
 		RgbState line = getRgbState(1);
+		double lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 		
 		NXTMotor ma = new NXTMotor(MotorPort.A);
 		NXTMotor mb = new NXTMotor(MotorPort.B);
 		
 		double error = 0;
 		double integral = 0;
-		double powerStandard = 70;
-		double powerVal = 19;
+		double powerStandard = 35;//70
+		double powerVal = 5;//19
 		
-		double corBase = calculCor(background.r, background.g, background.b, line);
+		double corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
+		
 		double offSet = (corBase + 1) / 2;
 		
 		double kp = 1 / (corBase - offSet);
-		double ki = -23;
-		double kd = -105;
+		double ki = -140;//-23
+		double kd = -280;//-105
 		
 		int res = -1;
 		
         /* optimisation */
-		int round = 0;
+
 		ArrayList<Double> errorList = new ArrayList<Double>();
 		double[] paras = new double[4];
 		paras[0] = powerStandard;
 		paras[1] = powerVal;
 		paras[2] = ki;
 		paras[3] = kd;
+		int times = 0;
+	
 		
 		while(!Button.ESCAPE.isDown()){
+			times++;
 			ColorSensor.Color vals = sensor1.colorSensor.getColor();
 			res = sensor1.colorChecker();
 			
 			if(res == STOP) {
-				round++;
+				ma.stop();
+				mb.stop();
 				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
 				mFileHandler.append(errorList,paras);
-				if(round == 2){
-					ma.stop();
-					mb.stop();					
-					break;
-				}	
-				setSamePower(ma, mb);	
+				break;	
 			}
 			
-			double newCor = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line);
+			double corNew = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line, lineColorSqrt);
 			
-			double newError = newCor - offSet;
-			errorList.add(newCor);
+			double newError = corNew - offSet;
+			if(times%50 == 0) errorList.add(Math.abs(newError));
 			
 			double derivative = newError - error;
 			
@@ -100,33 +101,8 @@ public class FollowLine {
 			double powerA = powerStandard - turn;
 			double powerB = powerStandard + turn;
 			
-			
 			changePower(powerA, ma);
 			changePower(powerB, mb);
-			
-			/*if(powerA > 0){
-				ma.setPower(new Double(powerA).intValue());
-				ma.forward();
-			}
-			else {
-				powerA = powerA*(-1);
-				ma.stop();
-				ma.backward();
-				ma.setPower(new Double(powerA).intValue());
-				
-			}
-			
-			if(powerB > 0){
-				mb.setPower(new Double(powerB).intValue());
-				mb.forward();
-			}
-			else {
-				powerB = powerB*(-1);
-				mb.stop();
-				mb.backward();
-				mb.setPower(new Double(powerB).intValue());
-				
-			}*/
 		}
 		
 	}
@@ -161,10 +137,8 @@ public class FollowLine {
 		return rgbState;
 	}
 	
-	private double calculCor(int r, int g, int b, RgbState base){
+	private double calculCor(int r, int g, int b, RgbState base, double baseColor){
 		double newColor = Math.sqrt(r*r + g*g + b*b);
-		double baseColor = Math.sqrt(base.r*base.r + base.g*base.g + base.b*base.b);
-		
 		double colorMix = r * base.r + g * base.g + b * base.b;  
 	    double cor = colorMix / (newColor * baseColor);
 		return cor;
