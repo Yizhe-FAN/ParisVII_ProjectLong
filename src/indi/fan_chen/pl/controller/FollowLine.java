@@ -14,19 +14,20 @@ import lejos.nxt.NXTMotor;
 
 public class FollowLine {
 
-	static final int WHITE = 1;
-	static final int LINE = 2;
-	static final int STOP = 3;
-	static final int LEFT = 4;
-	static final int RIGHT = 5;
-	static final int STRAIGHT = 6;
+	//1 white, 2 vert, 3 rouge, 4 noir, 5 violet, 6 marron 7 orange
+	static final int WHITE = 1; 
+	static final int LINE = 2; 
+	static final int STOP = 4; 
+	static final int LEFT = 3; 
+	static final int RIGHT = 5; 
+	static final int STRAIGHT = 5;
 	static final int BEREADY = 7;
 	static int mline = 1;
 	static int addTime = 0;
 	private ControlColorSensor sensor1;
 	private ControlColorSensor sensor2;
 	private int status = -1;//status of LEFF/RIGHT/STRAIGHT
-	private int changed = -1;//status of object line/corBase/offset
+	private boolean changed = false;//status of object line/corBase/offset
 	
 	public FollowLine(ControlColorSensor sensor1){
 		this.sensor1 = sensor1;
@@ -81,52 +82,53 @@ public class FollowLine {
 			
 			if(res == STOP) {
 				ma.stop();
-				mb.stop();
+				mb.stop();/*
 				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
-				mFileHandler.append(errorList,paras);
+				mFileHandler.append(errorList,paras);*/
 				break;	
-			}else if(res == LINE && changed == 0){//change == 0 -> status changed
-				changed = -1;
+			}else if(res == LINE && changed == true){//change == 0 -> status changed
+				changed = false;
 				line = getRgbState(1);
 				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 				offSet = (corBase + 1) / 2;
 			}else if(res == LEFT){
 				status = LEFT;
-				changed = 0;
+				changed = true;
 				line = getRgbState(3);
 				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 				offSet = (corBase + 1) / 2;
 			}else if(res == RIGHT){
 				status = RIGHT;
-				changed = 0;
+				changed = true;
 				line = getRgbState(4);
 				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 				offSet = (corBase + 1) / 2;
 			}else if(res == STRAIGHT){
 				status = STRAIGHT;
-				changed = 0;
+				changed = true;
 				line = getRgbState(5);
 				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 				offSet = (corBase + 1) / 2;
 			}else if(res == BEREADY){
 				if(status == LEFT){
-					changePower(50, ma);
-					changePower(60, mb);
+					changePower(50, ma);//
+					changePower(25, mb);
 					while(res != LINE){
 						res = sensor1.colorChecker();
 					}
 				}else if(status == RIGHT){
-					changePower(60, ma);
+					changePower(25, ma);//
 					changePower(50, mb);
 					while(res != LINE){
 						res = sensor1.colorChecker();
 					}
 				}else if(status == STRAIGHT){
-					setSamePower(ma,mb);
+					changePower(50, ma);
+					changePower(50, mb);
 					while(res != LINE){
 						res = sensor1.colorChecker();
 					}
@@ -136,7 +138,7 @@ public class FollowLine {
 			double corNew = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line, lineColorSqrt);
 			
 			double newError = corNew - offSet;
-			if(times%50 == 0) errorList.add(Math.abs(newError));
+			//if(times%50 == 0) errorList.add(Math.abs(newError));
 			
 			double derivative = newError - error;
 			
