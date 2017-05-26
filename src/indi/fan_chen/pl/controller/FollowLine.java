@@ -204,14 +204,17 @@ public class FollowLine {
 				changePower(50, ma);//
 				changePower(25, mb);
 				while(sensor1.colorChecker() != LINE){}
+				break;
 			case RIGHT:
 				changePower(25, ma);//
 				changePower(50, mb);
 				while(sensor1.colorChecker() != LINE){}
+				break;
 			case STRAIGHT:
 				changePower(50, ma);
 				changePower(50, mb);
-				while(sensor1.colorChecker() != LINE){}		
+				while(sensor1.colorChecker() != LINE){}
+				break;
 		}
 	}
 	
