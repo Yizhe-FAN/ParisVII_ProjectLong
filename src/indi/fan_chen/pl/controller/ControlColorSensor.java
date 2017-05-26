@@ -26,7 +26,7 @@ public class ControlColorSensor{
 		LCD.drawString("---Read Color---", 0, 0);		
 		while(!Button.ESCAPE.isDown()){
 			
-			if(Button.RIGHT.isDown()){
+			if(Button.RIGHT.isDown()){//new color
 				ColorType colorType = new ColorType();
 				colorTypeList.add(colorType);
 				LCD.clear(1);
@@ -38,7 +38,7 @@ public class ControlColorSensor{
 	              ie.printStackTrace();
 	            }
 			}
-			if(Button.LEFT.isDown()){
+			if(Button.LEFT.isDown()){//add RGB status to new color
 				int size = colorTypeList.size();
 				ColorType colorType = colorTypeList.get(size-1);
 				ColorSensor.Color vals = colorSensor.getColor();
@@ -83,102 +83,6 @@ public class ControlColorSensor{
 			}
 		}
 		return indice + 1;
-	}
-	
-	/*public void testColorChecker(){
-		LCD.clear();
-		LCD.drawString("---Check Color---", 0, 0);
-		int r,g,b;
-		int size = colorTypeList.size();
-		
-		while(!Button.ESCAPE.isDown()){
-
-			ColorSensor.Color vals = colorSensor.getColor();
-			r = vals.getRed(); 
-			g = vals.getGreen();
-			b = vals.getBlue();
-			int i;
-			int indice = 0;
-			double min = Double.MAX_VALUE;
-			ColorType tempCT;
-			for(i = 0;i < size; i++){
-				tempCT = colorTypeList.get(i);
-				double distance = Math.pow(r-tempCT.rgbAvg.r,2) + 
-						Math.pow(g-tempCT.rgbAvg.g,2) + 
-						Math.pow(b-tempCT.rgbAvg.b,2);
-				if(distance < min) {
-					min = distance;
-					indice = i;
-				}
-			}		
-			LCD.clear(1);
-			LCD.drawString("This is color: "+(indice+1), 0, 1);
-			try {
-	            Thread.sleep(2);
-	        } catch (InterruptedException ie){
-	        	ie.printStackTrace();
-	        }
-		}
-	}*/
-	
-	public void testColorCheckerOldVersion(){
-		LCD.clear();
-		LCD.drawString("---Check Color---", 0, 0);
-		int r,g,b;
-		int size = colorTypeList.size();
-		
-		while(!Button.ESCAPE.isDown()){
-			
-			ColorSensor.Color vals = colorSensor.getColor();
-			r = vals.getRed(); 
-			g = vals.getGreen();
-			b = vals.getBlue();
-			ArrayList<ColorType> colorsDetected = new ArrayList<ColorType>();
-			ArrayList<Integer> colorIds = new ArrayList<Integer>();
-			int i;
-			for(i = 0; i < size; i++){
-				ColorType s = colorTypeList.get(i);
-				if((r>s.rgbMin.r-10 && g>s.rgbMin.g-10 && b>s.rgbMin.b-10)&&
-						(r<s.rgbMax.r+10 && g<s.rgbMax.g+10 && b<s.rgbMax.b+10)){
-					colorsDetected.add(s);
-					colorIds.add(i);
-				}
-			}		
-			if(colorsDetected.size()== 0){
-				LCD.clear(1);
-				LCD.clear(2);
-				LCD.drawString("No Color", 0, 1);
-			}
-			else if(colorsDetected.size() == 1){
-				LCD.clear(1);
-				LCD.clear(2);
-				LCD.drawString("This is color: "+(colorIds.get(0)+1), 0, 1);
-			}
-			else
-			{
-				LCD.drawString("colorsDetected", 0, 2);
-				int indice = 0;
-				double min = Double.MAX_VALUE;
-				for(int j=0; j < colorsDetected.size();j++){
-					ColorType tempCS = colorsDetected.get(j);
-					double distance = Math.pow(r-tempCS.rgbAvg.r,2) + 
-						Math.pow(g-tempCS.rgbAvg.g,2) + 
-						Math.pow(b-tempCS.rgbAvg.b,2);
-					if(distance < min) {
-						min = distance;
-						indice = colorIds.get(j);
-					}
-				}
-				LCD.clear(1);
-				LCD.drawString("This is color: "+(indice + 1), 0, 1);
-			}
-			try {
-	            Thread.sleep(2);
-	        } catch (InterruptedException ie){
-	        	ie.printStackTrace();
-	        }
-		}
-		
 	}
 	
 	public void updateMin(ColorSensor.Color c, ColorType s){

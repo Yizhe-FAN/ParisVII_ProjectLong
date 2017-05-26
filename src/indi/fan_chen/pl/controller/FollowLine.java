@@ -17,17 +17,13 @@ public class FollowLine {
 	//1 white, 2 vert, 3 rouge, 4 noir, 5 violet, 6 marron 7 orange
 	static final int WHITE = 1; 
 	static final int LINE = 2; 
-	static final int STOP = 4; 
-	static final int LEFT = 3; 
+	static final int STOP = 3; 
+	static final int LEFT = 4; 
 	static final int RIGHT = 5; 
-	static final int STRAIGHT = 5;
+	static final int STRAIGHT = 6;
 	static final int BEREADY = 7;
-	static int mline = 1;
-	static int addTime = 0;
 	private ControlColorSensor sensor1;
 	private ControlColorSensor sensor2;
-	private int status = -1;//status of LEFF/RIGHT/STRAIGHT
-	private boolean changed = false;//status of object line/corBase/offset
 	
 	public FollowLine(ControlColorSensor sensor1){
 		this.sensor1 = sensor1;
@@ -48,6 +44,9 @@ public class FollowLine {
 		
 		NXTMotor ma = new NXTMotor(MotorPort.A);
 		NXTMotor mb = new NXTMotor(MotorPort.B);
+		
+		int status = -1;//status of LEFF/RIGHT/STRAIGHT
+		boolean changed = false;//status of object line/corBase/offset
 		
 		double error = 0;
 		double integral = 0;
@@ -72,68 +71,15 @@ public class FollowLine {
 		paras[1] = powerVal;
 		paras[2] = ki;
 		paras[3] = kd;
-		int times = 0;
 	
 		
 		while(!Button.ESCAPE.isDown()){
-			times++;
 			ColorSensor.Color vals = sensor1.colorSensor.getColor();
 			res = sensor1.colorChecker();
 			
-			if(res == STOP) {
-				ma.stop();
-				mb.stop();/*
-				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
-				mFileHandler.append(errorList,paras);*/
-				break;	
-			}else if(res == LINE && changed == true){//change == 0 -> status changed
-				changed = false;
-				line = getRgbState(1);
-				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
-				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
-				offSet = (corBase + 1) / 2;
-			}else if(res == LEFT){
-				status = LEFT;
-				changed = true;
-				line = getRgbState(3);
-				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
-				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
-				offSet = (corBase + 1) / 2;
-			}else if(res == RIGHT){
-				status = RIGHT;
-				changed = true;
-				line = getRgbState(4);
-				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
-				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
-				offSet = (corBase + 1) / 2;
-			}else if(res == STRAIGHT){
-				status = STRAIGHT;
-				changed = true;
-				line = getRgbState(5);
-				lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
-				corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
-				offSet = (corBase + 1) / 2;
-			}else if(res == BEREADY){
-				if(status == LEFT){
-					changePower(50, ma);//
-					changePower(25, mb);
-					while(res != LINE){
-						res = sensor1.colorChecker();
-					}
-				}else if(status == RIGHT){
-					changePower(25, ma);//
-					changePower(50, mb);
-					while(res != LINE){
-						res = sensor1.colorChecker();
-					}
-				}else if(status == STRAIGHT){
-					changePower(50, ma);
-					changePower(50, mb);
-					while(res != LINE){
-						res = sensor1.colorChecker();
-					}
-				}
-			}	
+			
+			checkResStatus(res, changed, status, background, line,
+					lineColorSqrt, corBase, offSet, ma, mb);	
 			
 			double corNew = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line, lineColorSqrt);
 			
@@ -161,8 +107,8 @@ public class FollowLine {
 	}
 	
 	private void setSamePower(NXTMotor ma, NXTMotor mb){
-		ma.setPower(30);
-		mb.setPower(30);	
+		ma.setPower(50);
+		mb.setPower(50);	
 		ma.forward();
 		mb.forward();
 	}
@@ -197,6 +143,70 @@ public class FollowLine {
 		return cor;
 	}
 	
+	private void checkResStatus(int result, boolean changed, int status, RgbState background, RgbState line,
+			double lineColorSqrt, double corBase, double offSet, NXTMotor ma, NXTMotor mb){
+		switch(result){
+			case STOP:
+				setPowerWithRes(result, ma, mb);/*
+				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
+				mFileHandler.append(errorList,paras);*/
+				break;
+			case LINE:
+				if(changed == true){
+					changed = false;
+					resetPidLineData(1, background, line, lineColorSqrt, corBase, offSet);
+				}
+				break;
+			case LEFT:
+				status = LEFT;
+				changed = true;
+				resetPidLineData(3, background, line, lineColorSqrt, corBase, offSet);
+				break;
+			case RIGHT:
+				status = RIGHT;
+				changed = true;
+				resetPidLineData(4, background, line, lineColorSqrt, corBase, offSet);
+				break;
+			case STRAIGHT:
+				status = STRAIGHT;
+				changed = true;
+				resetPidLineData(5, background, line, lineColorSqrt, corBase, offSet);
+				break;
+			case BEREADY:
+				setPowerWithRes(result, ma, mb);
+				break;
+		}
+	}
+	
+	private void resetPidLineData(int result, RgbState background, RgbState line, 
+			double lineColorSqrt, double corBase, double offSet){
+		line = getRgbState(result);
+		lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
+		corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
+		offSet = (corBase + 1) / 2;
+	}
+	
+	private void setPowerWithRes(int result, NXTMotor a, NXTMotor b){
+		switch(result){
+			case STOP:
+				a.stop();
+				b.stop();
+				break;
+			case LEFT:
+				changePower(50, a);//
+				changePower(25, b);
+				while(sensor1.colorChecker() != LINE){}
+			case RIGHT:
+				changePower(25, a);//
+				changePower(50, b);
+				while(sensor1.colorChecker() != LINE){}
+			case STRAIGHT:
+				changePower(50, a);
+				changePower(50, b);
+				while(sensor1.colorChecker() != LINE){}		
+		}
+	}
+	
 	public void runFollowLineMode2(){
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
@@ -211,38 +221,9 @@ public class FollowLine {
 		while(!Button.ESCAPE.isDown()){
 			res = sensorReadShow();
 
-			while((!Button.ESCAPE.isDown()) && (res[0] != WHITE) && (res[1] == WHITE)){//turn right
-				directionFlag = 1;
-				speed = 300;
-				turn++;
-				mMoteur.right(turn);
-				res = sensorReadShow();
-			}
-			turn = 0;
-			mMoteur.mForward(speed);
-
-			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] != WHITE)){//turn left
-				directionFlag = 0;
-				speed = 300;
-				turn++;
-				mMoteur.left(turn);
-				res = sensorReadShow();
-			}
-			turn = 0;
-			mMoteur.mForward(speed);
-			
-			while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] == WHITE)){//find line
-				turn++;
-				//speed = 400;
-				if(directionFlag == 0){
-					mMoteur.left(turn);
-				}else if(directionFlag == 1){
-					mMoteur.right(turn);
-				}
-				res = sensorReadShow();
-			}
-			turn = 0;
-			mMoteur.mForward(speed);
+			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 1);
+			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 2);
+			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 3);
 			
 			if(speed < 600){
 				speed += 50;
@@ -251,7 +232,65 @@ public class FollowLine {
 		}
 
 	}
+	
+	private void twoSensorFollowLine(int[] res, int turn, int speed, 
+			int directionFlag, Moteur mMoteur, int mode){
+		switch(mode){
+			case 1:
+				goLeftOrRight(res, turn, speed, directionFlag, mMoteur, 1);
+				break;
+			case 2:
+				goLeftOrRight(res, turn, speed, directionFlag, mMoteur, 2);
+				break;
+			case 3:
+				while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] == WHITE)){//find line
+					turn++;
+					//speed = 400;
+					if(directionFlag == 0){
+						mMoteur.left(turn);
+					}else if(directionFlag == 1){
+						mMoteur.right(turn);
+					}
+					res = sensorReadShow();
+				}
+				turn = 0;
+				mMoteur.mForward(speed);
+				break;
+		}		
+	}
 
+	private void goLeftOrRight(int[] res, int turn, int speed, 
+			int directionFlag, Moteur mMoteur, int mode){
+		int a = 0;
+		int b = 0;
+		int d = 0;
+		switch(mode){
+			case 1:
+				a = 0;
+				b = 1;
+				d = 1;
+				break;
+			case 2:
+				a = 1;
+				b = 0;
+				d = 0;
+				break;
+		}
+		while((!Button.ESCAPE.isDown()) && (res[a] != WHITE) && (res[b] == WHITE)){//turn right
+			directionFlag = d;
+			speed = 300;
+			turn++;
+			if(mode == 1){
+				mMoteur.right(turn);
+			}else{
+				mMoteur.left(turn);
+			}
+			res = sensorReadShow();
+		}
+		turn = 0;
+		mMoteur.mForward(speed);
+	}
+	
 	public int[] sensorReadShow(){
 		int[] res = new int[2];
 		res[0] = sensor1.colorChecker();
