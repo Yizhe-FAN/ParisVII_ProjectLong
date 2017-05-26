@@ -14,7 +14,6 @@ import lejos.nxt.NXTMotor;
 
 public class FollowLine {
 
-	//1 white, 2 vert, 3 rouge, 4 noir, 5 violet, 6 marron 7 orange
 	static final int WHITE = 1; 
 	static final int LINE = 2; 
 	static final int STOP = 3; 
@@ -24,6 +23,26 @@ public class FollowLine {
 	static final int BEREADY = 7;
 	private ControlColorSensor sensor1;
 	private ControlColorSensor sensor2;
+	
+	//var Mode1
+	RgbState background = getRgbState(0);
+	RgbState line = getRgbState(1);
+	double lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
+	
+	NXTMotor ma = new NXTMotor(MotorPort.A);
+	NXTMotor mb = new NXTMotor(MotorPort.B);
+	
+	int status = -1;//status of LEFF/RIGHT/STRAIGHT
+	boolean changed = false;//status of object line/corBase/offset
+	
+	double corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
+	double offSet = (corBase + 1) / 2;
+	
+	//var Mode2
+	int speed = 300;
+	int turn = 0;
+	Moteur mMoteur = new Moteur();
+	int directionFlag = -1;
 	
 	public FollowLine(ControlColorSensor sensor1){
 		this.sensor1 = sensor1;
@@ -36,22 +55,7 @@ public class FollowLine {
 	
 	public void runFollowLineMode1(){
 		LCD.clear();
-		LCD.drawString("---Follow Line---", 0, 0);
-		
-		RgbState background = getRgbState(0);
-		RgbState line = getRgbState(1);
-		double lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
-		
-		NXTMotor ma = new NXTMotor(MotorPort.A);
-		NXTMotor mb = new NXTMotor(MotorPort.B);
-		
-		int status = -1;//status of LEFF/RIGHT/STRAIGHT
-		boolean changed = false;//status of object line/corBase/offset
-		
-		double corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
-		
-		double offSet = (corBase + 1) / 2;
-	
+		LCD.drawString("---Follow Line---", 0, 0);	
 		int res = -1;
 		
         /* optimisation 
@@ -68,20 +72,18 @@ public class FollowLine {
 			ColorSensor.Color vals = sensor1.colorSensor.getColor();
 			res = sensor1.colorChecker();
 				
-			checkResStatus(res, changed, status, background, line,
-					lineColorSqrt, corBase, offSet, ma, mb);
+			checkResStatus(res);
 			if(res == STOP){
 				break;
 			}
 			
-			pid(vals, line, lineColorSqrt, offSet, corBase, ma, mb);
+			pid(vals);
 		
 		}
 		
 	}
 	
-	private void pid(ColorSensor.Color vals, RgbState line, double lineColorSqrt, double offSet, 
-			double corBase, NXTMotor ma, NXTMotor mb){
+	private void pid(ColorSensor.Color vals){
 		
 		double powerStandard = 35;//70
 		double powerVal = 5;//19
@@ -151,66 +153,64 @@ public class FollowLine {
 		return cor;
 	}
 	
-	private void checkResStatus(int result, boolean changed, int status, RgbState background, RgbState line,
-			double lineColorSqrt, double corBase, double offSet, NXTMotor ma, NXTMotor mb){
+	private void checkResStatus(int result){
 		switch(result){
 			case STOP:
-				setPowerWithRes(result, ma, mb);/*
+				setPowerWithRes(result);/*
 				FileHandler mFileHandler = new FileHandler(Settings.PID_ERROR_FILE);
 				mFileHandler.append(errorList,paras);*/
 				break;
 			case LINE:
 				if(changed == true){
 					changed = false;
-					resetPidLineData(1, background, line, lineColorSqrt, corBase, offSet);
+					resetPidLineData(1);
 				}
 				break;
 			case LEFT:
 				status = LEFT;
 				changed = true;
-				resetPidLineData(3, background, line, lineColorSqrt, corBase, offSet);
+				resetPidLineData(3);
 				break;
 			case RIGHT:
 				status = RIGHT;
 				changed = true;
-				resetPidLineData(4, background, line, lineColorSqrt, corBase, offSet);
+				resetPidLineData(4);
 				break;
 			case STRAIGHT:
 				status = STRAIGHT;
 				changed = true;
-				resetPidLineData(5, background, line, lineColorSqrt, corBase, offSet);
+				resetPidLineData(5);
 				break;
 			case BEREADY:
-				setPowerWithRes(result, ma, mb);
+				setPowerWithRes(result);
 				break;
 		}
 	}
 	
-	private void resetPidLineData(int result, RgbState background, RgbState line, 
-			double lineColorSqrt, double corBase, double offSet){
+	private void resetPidLineData(int result){
 		line = getRgbState(result);
 		lineColorSqrt = Math.sqrt(line.r*line.r + line.g*line.g + line.b*line.b);
 		corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 		offSet = (corBase + 1) / 2;
 	}
 	
-	private void setPowerWithRes(int result, NXTMotor a, NXTMotor b){
+	private void setPowerWithRes(int result){
 		switch(result){
 			case STOP:
-				a.stop();
-				b.stop();
+				ma.stop();
+				mb.stop();
 				break;
 			case LEFT:
-				changePower(50, a);//
-				changePower(25, b);
+				changePower(50, ma);//
+				changePower(25, mb);
 				while(sensor1.colorChecker() != LINE){}
 			case RIGHT:
-				changePower(25, a);//
-				changePower(50, b);
+				changePower(25, ma);//
+				changePower(50, mb);
 				while(sensor1.colorChecker() != LINE){}
 			case STRAIGHT:
-				changePower(50, a);
-				changePower(50, b);
+				changePower(50, ma);
+				changePower(50, mb);
 				while(sensor1.colorChecker() != LINE){}		
 		}
 	}
@@ -219,19 +219,14 @@ public class FollowLine {
 		LCD.clear();
 		LCD.drawString("---Follow Line---", 0, 0);
 		int[] res;
-		int speed = 300;
-		int turn = 0;
-		Moteur mMoteur = new Moteur();
 		mMoteur.mForward(speed);
-
-		int directionFlag = -1;
 		
 		while(!Button.ESCAPE.isDown()){
 			res = sensorReadShow();
 
-			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 1);
-			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 2);
-			twoSensorFollowLine(res, turn, speed, directionFlag, mMoteur, 3);
+			twoSensorFollowLine(res, 1);
+			twoSensorFollowLine(res, 2);
+			twoSensorFollowLine(res, 3);
 			
 			if(speed < 600){
 				speed += 50;
@@ -241,14 +236,13 @@ public class FollowLine {
 
 	}
 	
-	private void twoSensorFollowLine(int[] res, int turn, int speed, 
-			int directionFlag, Moteur mMoteur, int mode){
+	private void twoSensorFollowLine(int[] res, int mode){
 		switch(mode){
 			case 1:
-				goLeftOrRight(res, turn, speed, directionFlag, mMoteur, 1);
+				goLeftOrRight(res, 1);
 				break;
 			case 2:
-				goLeftOrRight(res, turn, speed, directionFlag, mMoteur, 2);
+				goLeftOrRight(res, 2);
 				break;
 			case 3:
 				while((!Button.ESCAPE.isDown()) && (res[0] == WHITE) && (res[1] == WHITE)){//find line
@@ -267,8 +261,7 @@ public class FollowLine {
 		}		
 	}
 
-	private void goLeftOrRight(int[] res, int turn, int speed, 
-			int directionFlag, Moteur mMoteur, int mode){
+	private void goLeftOrRight(int[] res, int mode){
 		int a = 0;
 		int b = 0;
 		int d = 0;
