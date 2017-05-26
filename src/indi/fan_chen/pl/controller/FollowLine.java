@@ -48,62 +48,70 @@ public class FollowLine {
 		int status = -1;//status of LEFF/RIGHT/STRAIGHT
 		boolean changed = false;//status of object line/corBase/offset
 		
-		double error = 0;
-		double integral = 0;
-		double powerStandard = 35;//70
-		double powerVal = 5;//19
-		
 		double corBase = calculCor(background.r, background.g, background.b, line, lineColorSqrt);
 		
 		double offSet = (corBase + 1) / 2;
-		
-		double kp = 1 / (corBase - offSet);
-		double ki = -140;//-23
-		double kd = -280;//-105
-		
+	
 		int res = -1;
 		
-        /* optimisation */
+        /* optimisation 
 
 		ArrayList<Double> errorList = new ArrayList<Double>();
 		double[] paras = new double[4];
 		paras[0] = powerStandard;
 		paras[1] = powerVal;
 		paras[2] = ki;
-		paras[3] = kd;
+		paras[3] = kd;*/
 	
 		
 		while(!Button.ESCAPE.isDown()){
 			ColorSensor.Color vals = sensor1.colorSensor.getColor();
 			res = sensor1.colorChecker();
-			
-			
+				
 			checkResStatus(res, changed, status, background, line,
-					lineColorSqrt, corBase, offSet, ma, mb);	
-			
-			double corNew = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line, lineColorSqrt);
-			
-			double newError = corNew - offSet;
-			//if(times%50 == 0) errorList.add(Math.abs(newError));
-			
-			double derivative = newError - error;
-			
-			if ( (newError * error) < 0 ){
-				integral = 0;
+					lineColorSqrt, corBase, offSet, ma, mb);
+			if(res == STOP){
+				break;
 			}
-			error = newError;
 			
-			integral += error;
-			
-			double turn = powerVal * kp * error + ki * integral + kd * derivative;
-			
-			double powerA = powerStandard - turn;
-			double powerB = powerStandard + turn;
-			
-			changePower(powerA, ma);
-			changePower(powerB, mb);
+			pid(vals, line, lineColorSqrt, offSet, corBase, ma, mb);
+		
 		}
 		
+	}
+	
+	private void pid(ColorSensor.Color vals, RgbState line, double lineColorSqrt, double offSet, 
+			double corBase, NXTMotor ma, NXTMotor mb){
+		
+		double powerStandard = 35;//70
+		double powerVal = 5;//19
+		double error = 0;
+		double integral = 0;
+		
+		double kp = 1 / (corBase - offSet);
+		double ki = -140;//-23
+		double kd = -280;//-105
+		
+		double corNew = calculCor(vals.getRed(), vals.getGreen(), vals.getBlue(), line, lineColorSqrt);
+		double newError = corNew - offSet;
+		//if(times%50 == 0) errorList.add(Math.abs(newError));
+		
+		double derivative = newError - error;
+		
+		if ( (newError * error) < 0 ){
+			integral = 0;
+		}
+		error = newError;
+		
+		integral += error;
+		
+		double turn = powerVal * kp * error + ki * integral + kd * derivative;
+		
+		double powerA = powerStandard - turn;
+		double powerB = powerStandard + turn;
+		
+		changePower(powerA, ma);
+		changePower(powerB, mb);
 	}
 	
 	private void setSamePower(NXTMotor ma, NXTMotor mb){
